@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prose | Premium Blogging Platform</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-color: #1a8917;
+        --secondary-color: #0f730c;
+        --accent-color: #f0f7f0;
+        --text-color: #292929;
+        --text-muted: #757575;
+        --bg-color: #ffffff;
+        --bg-light: #f9f9f9;
+        --border-color: #e0e0e0;
+        --success-color: #4caf50;
+        --error-color: #f44336;
+        --font-heading: "Montserrat", sans-serif;
+        --font-body: "Merriweather", serif;
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+      }
+
+      body {
+        font-family: var(--font-body);
+        line-height: 1.7;
+        color: var(--text-color);
+        background-color: var(--bg-light);
+        font-size: 16px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 0.75em;
+        color: #111;
+      }
+
+      p {
+        margin-bottom: 1.2em;
+      }
+
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      a:hover {
+        color: var(--secondary-color);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .header-wrapper {
+        background-color: var(--bg-color);
+        box-shadow: var(--shadow-sm);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      header {
+        padding: 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-family: var(--font-heading);
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--primary-color);
+        letter-spacing: -0.5px;
+      }
+
+      .logo span {
+        font-weight: 300;
+        color: var(--text-color);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+      }
+
+      .nav-link {
+        font-family: var(--font-heading);
+        font-weight: 500;
+        font-size: 15px;
+        color: var(--text-muted);
+        transition: all 0.2s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--primary-color);
+      }
+
+      .profile-dropdown {
+        position: relative;
+      }
+
+      .profile-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+
+      .profile-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background-color: var (--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-family: var(--font-heading);
+        font-weight: 600;
+      }
+
+      .profile-dropdown-menu {
+        position: absolute;
+        top: 120%;
+        right: 0;
+        width: 200px;
+        background-color: var(--bg-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        padding: 8px 0;
+        z-index: 200;
+        display: none;
+      }
+
+      .profile-dropdown-menu.show {
+        display: block;
+      }
+
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        font-family: var(--font-heading);
+        font-size: 14px;
+        color: var(--text-color);
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-item:hover {
+        background-color: var(--accent-color);
+        color: var(--primary-color);
+      }
+
+      .dropdown-item i {
+        font-size: 16px;
+        width: 20px;
+      }
+
+      #search-and-filter {
+        display: flex;
+        gap: 15px;
+        margin: 30px 0;
+        align-items: center;
+      }
+
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+      }
+
+      #search-bar {
+        width: 100%;
+        padding: 12px 20px;
+        padding-left: 40px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        font-family: var(--font-body);
+        font-size: 16px;
+        transition: all 0.2s ease;
+      }
+
+      #search-bar:focus {
+        outline: none;
+        border-color: var (--primary-color);
+        box-shadow: 0 0 0 2px rgba(26, 137, 23, 0.2);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+      }
+
+      #tag-filter {
+        padding: 12px 15px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        font-family: var(--font-heading);
+        font-size: 15px;
+        min-width: 150px;
+        background-color: var(--bg-color);
+      }
+
+      #tag-filter:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .tab-navigation {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 30px;
+      }
+
+      .tab {
+        padding: 12px 24px;
+        font-family: var(--font-heading);
+        font-weight: 500;
+        font-size: 15px;
+        cursor: pointer;
+        color: var(--text-muted);
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .tab.active {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+      }
+
+      main {
+        padding: 40px 0;
+        background: var(--bg-light);
+      }
+
+      .content-wrapper {
+        display: flex;
+        gap: 30px;
+      }
+
+      .main-content {
+        flex: 1;
+      }
+
+      .sidebar {
+        width: 300px;
+        position: sticky;
+        top: 90px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        align-self: flex-start;
+      }
+
+      .section-title {
+        font-family: var(--font-heading);
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--text-color);
+      }
+
+      #post-form {
+        background: var(--bg-color);
+        border-radius: var (--radius-md);
+        padding: 25px;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow-md);
+        display: none;
+        position: relative;
+      }
+
+      .editor-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .editor-title {
+        font-family: var(--font-heading);
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .editor-toolbar {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+
+      .editor-toolbar button {
+        height: 40px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-color);
+        background: var(--bg-color);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-color);
+      }
+
+      .editor-toolbar button:hover {
+        background: var(--accent-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .file-upload {
+        position: relative;
+      }
+
+      .file-upload label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-color);
+        background: var(--bg-color);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: var(--text-color);
+      }
+
+      .file-upload label:hover {
+        background: var(--accent-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .file-upload input[type="file"] {
+        position: absolute;
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      #editor {
+        min-height: 250px;
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 15px;
+        margin-bottom: 20px;
+        font-family: var(--font-body);
+        line-height: 1.7;
+        font-size: 16px;
+        background-color: var(--bg-color);
+      }
+
+      #editor:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      #editor:empty:before {
+        content: "What's on your mind? Share your thoughts...";
+        color: var(--text-muted);
+        font-style: italic;
+      }
+
+      #editor h1 {
+        font-size: 24px;
+        margin-top: 20px;
+      }
+
+      #editor h2 {
+        font-size: 20px;
+        margin-top: 15px;
+      }
+
+      #editor blockquote {
+        border-left: 3px solid var(--primary-color);
+        padding-left: 15px;
+        margin-left: 0;
+        font-style: italic;
+        color: #555;
+      }
+
+      .post-form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      #tags-input {
+        flex-grow: 1;
+        padding: 12px 15px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        font-family: var (--font-body);
+        font-size: 15px;
+        min-width: 250px;
+      }
+
+      #tags-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .publish-btn {
+        padding: 12px 24px;
+        background-color: var(--primary-color);
+        color: white;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 15px;
+      }
+
+      .publish-btn:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-1px);
+      }
+
+      #posts-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .post {
+        background: var(--bg-color);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .post:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .post-inner {
+        padding: 25px;
+      }
+
+      .post-content {
+        margin-bottom: 20px;
+        font-family: var(--font-body);
+        line-height: 1.8;
+      }
+
+      .post-content img,
+      .post-content video {
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--radius-sm);
+        margin: 15px 0;
+      }
+
+      .post-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: var(--text-muted);
+        font-family: var(--font-heading);
+      }
+
+      .post-date {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 15px 0;
+      }
+
+      .tag {
+        background: var(--accent-color);
+        color: var (--primary-color);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-family: var(--font-heading);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+      }
+
+      .tag:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        border-top: 1px solid var(--border-color);
+        background-color: #fafafa;
+      }
+
+      .post-action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-heading);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-muted);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+      }
+
+      .action-btn:hover {
+        background-color: var(--accent-color);
+        color: var(--primary-color);
+      }
+
+      .action-btn i {
+        font-size: 16px;
+      }
+
+      .action-btn i.fas.fa-heart {
+        color: #e91e63;
+      }
+
+      .social-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .social-button {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: white;
+        transition: all 0.2s ease;
+        font-size: 15px;
+      }
+
+      .social-twitter {
+        background-color: #1da1f2;
+      }
+
+      .social-facebook {
+        background-color: #4267b2;
+      }
+
+      .social-pinterest {
+        background-color: #e60023;
+      }
+
+      .social-linkedin {
+        background-color: #0077b5;
+      }
+
+      .social-button:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      /* Follow button styles */
+      .follow-btn {
+        margin-left: 10px;
+        padding: 3px 10px;
+        font-size: 12px;
+        border-radius: 15px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+
+      .follow-btn.following {
+        background-color: var(--bg-color);
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
+
+      .follow-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .comments-section {
+        padding: 25px;
+        border-top: 1px solid var(--border-color);
+        display: none; /* Hide comments by default */
+      }
+
+      .comment-count-badge {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border-radius: 20px;
+        padding: 2px 8px;
+        font-size: 12px;
+        margin-left: 5px;
+      }
+
+      .comments-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .comments-title {
+        font-family: var(--font-heading);
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .comments-count {
+        font-family: var(--font-heading);
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+
+      .comment-input-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-family: var(--font-heading);
+      }
+
+      .comment-form {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .comment-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-family: var(--font-body);
+        font-size: 15px;
+      }
+
+      .comment-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .comment-submit {
+        align-self: flex-end;
+        padding: 8px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        font-family: var(--font-heading);
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .comment-submit:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .comments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .comment {
+        display: flex;
+        gap: 15px;
+      }
+
+      .comment-content {
+        flex-grow: 1;
+      }
+
+      .comment-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+      }
+
+      .comment-author {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .comment-time {
+        font-family: var(--font-heading);
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .comment-body {
+        font-size: 15px;
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      .comment-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .comment-action {
+        font-family: var(--font-heading);
+        font-size: 13px;
+        color: var(--text-muted);
+        background: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .comment-action:hover {
+        color: var(--primary-color);
+      }
+
+      .comment-replies {
+        margin-left: 55px;
+        margin-top: 15px;
+        padding-left: 15px;
+        border-left: 2px solid var(--border-color);
+      }
+
+      .reply-form {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .reply-input {
+        flex-grow: 1;
+        padding: 8px 12px;
+        border: 1px solid var (--border-color);
+        border-radius: var(--radius-md);
+        font-family: var(--font-body);
+        font-size: 14px;
+      }
+
+      .reply-submit {
+        padding: 6px 12px;
+        background-color: var(--primary-color);
+        color: white;
+        font-family: var(--font-heading);
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .reply-submit:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .sidebar-section {
+        background: var(--bg-color);
+        border-radius: var(--radius-md);
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: var(--shadow-md);
+      }
+
+      .trending-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .featured-writers {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .writer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .writer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-family: var(--font-heading);
+        font-weight: 600;
+      }
+
+      .writer-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .writer-name {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .writer-bio {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .featured-post {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .featured-post-image {
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+
+      .featured-post-image img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+      }
+
+      .featured-post-title {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1.4;
+      }
+
+      .featured-post-excerpt {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      figure {
+        margin: 15px 0;
+      }
+
+      figcaption {
+        font-size: 14px;
+        color: var (--text-muted);
+        text-align: center;
+        padding: 8px 0;
+        font-style: italic;
+      }
+
+      .create-post-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        box-shadow: var(--shadow-md);
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .create-post-btn:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .close-form-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        font-size: 18px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .close-form-btn:hover {
+        color: var(--primary-color);
+      }
+
+      @media (max-width: 1024px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          position: static;
+          max-height: none;
+          overflow-y: visible;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          width: 95%;
+        }
+        #search-and-filter {
+          flex-direction: column;
+        }
+        .editor-toolbar {
+          grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+        }
+        .post-form-footer {
+          flex-direction: column;
+        }
+        .publish-btn {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 576px) {
+        header {
+          flex-direction: column;
+          gap: 15px;
+          text-align: center;
+        }
+        .social-buttons {
+          justify-content: center;
+        }
+        .post-actions {
+          flex-direction: column;
+          gap: 15px;
+        }
+        .create-post-btn {
+          bottom: 20px;
+          right: 20px;
+          width: 50px;
+          height: 50px;
+          font-size: 20px;
+        }
+      }
+
+      /* Newsletter Section Styles */
+      .newsletter-section {
+        background-color: var(--accent-color);
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .newsletter-description {
+        margin-bottom: 15px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .newsletter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .newsletter-input {
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-family: var(--font-body);
+        font-size: 15px;
+        width: 100%;
+      }
+
+      .newsletter-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(26, 137, 23, 0.1);
+      }
+
+      .newsletter-submit-btn {
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: white;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .newsletter-submit-btn:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-1px);
+      }
+
+      .newsletter-privacy {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      /* Footer Styles */
+      .footer {
+        background-color: #f8f8f8;
+        border-top: 1px solid var(--border-color);
+        padding: 60px 0 30px;
+        margin-top: 60px;
+        color: var(--text-color);
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+
+      .footer-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .footer-title {
+        font-family: var(--font-heading);
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-color);
+      }
+
+      .footer-links {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .footer-links li a {
+        color: var(--text-muted);
+        transition: color 0.2s ease;
+        font-family: var(--font-heading);
+        font-size: 14px;
+      }
+
+      .footer-links li a:hover {
+        color: var(--primary-color);
+      }
+
+      .footer-social {
+        display: flex;
+        gap: 15px;
+      }
+
+      .social-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        transition: all 0.2s ease;
+        font-size: 16px;
+      }
+
+      .social-icon:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .footer-bottom {
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .copyright {
+        color: var(--text-muted);
+        font-size: 14px;
+        font-family: var(--font-heading);
+      }
+
+      .footer-legal {
+        display: flex;
+        gap: 20px;
+      }
+
+      .footer-legal a {
+        color: var(--text-muted);
+        font-size: 14px;
+        font-family: var(--font-heading);
+      }
+
+      .footer-legal a:hover {
+        color: var(--primary-color);
+      }
+
+      @media (max-width: 768px) {
+        .footer-bottom {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .footer-legal {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="container">
+        <header>
+          <div class="logo">Prose<span>.</span></div>
+          <div class="header-right">
+            <nav class="nav-links">
+              <a href="#" class="nav-link">Home</a>
+              <a href="#" class="nav-link">Explore</a>
+              <a href="#" class="nav-link">Write</a>
+              <a href="#" class="nav-link">About</a>
+            </nav>
+            <div class="profile-dropdown">
+              <button class="profile-button" aria-label="Profile menu">
+                <div class="profile-avatar">Y</div>
+                <i class="fas fa-caret-down"></i>
+              </button>
+              <div class="profile-dropdown-menu" id="profile-dropdown-menu">
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-cog"></i> Settings
+                </a>
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
+    </div>
+
+    <main>
+      <div class="container">
+        <div id="search-and-filter">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="search"
+              id="search-bar"
+              placeholder="Search posts..."
+              aria-label="Search posts"
+            />
+          </div>
+          <select id="tag-filter" aria-label="Filter by tag">
+            <option value="">All Tags</option>
+          </select>
+        </div>
+
+        <div class="tab-navigation">
+          <div class="tab active">For You</div>
+          <div class="tab">Following</div>
+          <div class="tab">Trending</div>
+        </div>
+
+        <div class="content-wrapper">
+          <div class="main-content">
+            <section id="post-form" aria-label="Create new post">
+              <div class="editor-header">
+                <div class="editor-title">Create New Post</div>
+                <button class="close-form-btn" aria-label="Close editor">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+
+              <div class="editor-toolbar">
+                <button onclick="formatText('bold')" aria-label="Bold">
+                  <i class="fas fa-bold"></i>
+                </button>
+                <button onclick="formatText('italic')" aria-label="Italic">
+                  <i class="fas fa-italic"></i>
+                </button>
+                <button
+                  onclick="formatText('underline')"
+                  aria-label="Underline"
+                >
+                  <i class="fas fa-underline"></i>
+                </button>
+                <button
+                  onclick="formatText('formatBlock', 'h1')"
+                  aria-label="Heading 1"
+                >
+                  <i class="fas fa-heading"></i>
+                </button>
+                <button
+                  onclick="formatText('formatBlock', 'h2')"
+                  aria-label="Heading 2"
+                >
+                  <i class="fas fa-heading" style="font-size: 0.8em"></i>
+                </button>
+                <button
+                  onclick="formatText('formatBlock', 'blockquote')"
+                  aria-label="Blockquote"
+                >
+                  <i class="fas fa-quote-right"></i>
+                </button>
+                <button
+                  onclick="formatText('insertUnorderedList')"
+                  aria-label="Bullet list"
+                >
+                  <i class="fas fa-list-ul"></i>
+                </button>
+                <button
+                  onclick="formatText('insertOrderedList')"
+                  aria-label="Numbered list"
+                >
+                  <i class="fas fa-list-ol"></i>
+                </button>
+                <button
+                  onclick="formatText('createLink')"
+                  aria-label="Insert link"
+                >
+                  <i class="fas fa-link"></i>
+                </button>
+                <button
+                  onclick="formatText('justifyLeft')"
+                  aria-label="Align left"
+                >
+                  <i class="fas fa-align-left"></i>
+                </button>
+                <button
+                  onclick="formatText('justifyCenter')"
+                  aria-label="Center"
+                >
+                  <i class="fas fa-align-center"></i>
+                </button>
+                <button
+                  onclick="formatText('justifyRight')"
+                  aria-label="Align right"
+                >
+                  <i class="fas fa-align-right"></i>
+                </button>
+                <div class="file-upload">
+                  <label for="media-upload">
+                    <i class="fas fa-image"></i>
+                  </label>
+                  <input
+                    type="file"
+                    id="media-upload"
+                    accept="image/*,video/*"
+                    onchange="handleMediaUpload(event)"
+                    aria-label="Upload media"
+                  />
+                </div>
+              </div>
+
+              <div
+                id="editor"
+                contenteditable="true"
+                role="textbox"
+                aria-multiline="true"
+              ></div>
+
+              <div class="post-form-footer">
+                <input
+                  type="text"
+                  id="tags-input"
+                  placeholder="Add tags (comma-separated)"
+                  aria-label="Post tags"
+                />
+                <button onclick="submitPost()" class="publish-btn">
+                  <i class="fas fa-paper-plane"></i> Publish
+                </button>
+              </div>
+            </section>
+
+            <div id="posts-container" aria-label="Blog posts"></div>
+          </div>
+
+          <div class="sidebar">
+            <div class="sidebar-section">
+              <h3 class="section-title">Trending Tags</h3>
+              <div class="trending-tags" id="trending-tags">
+                <!-- Will be populated by JS -->
+              </div>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="section-title">Featured Writers</h3>
+              <div class="featured-writers">
+                <div class="writer">
+                  <div class="writer-avatar">JD</div>
+                  <div class="writer-info">
+                    <div class="writer-name">Jane Doe</div>
+                    <div class="writer-bio">Travel & Lifestyle Blogger</div>
+                  </div>
+                </div>
+                <div class="writer">
+                  <div class="writer-avatar">JS</div>
+                  <div class="writer-info">
+                    <div class="writer-name">John Smith</div>
+                    <div class="writer-bio">Tech Enthusiast</div>
+                  </div>
+                </div>
+                <div class="writer">
+                  <div class="writer-avatar">AK</div>
+                  <div class="writer-info">
+                    <div class="writer-name">Alex Kim</div>
+                    <div class="writer-bio">Food & Culture Writer</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sidebar-section newsletter-section">
+              <h3 class="section-title">Subscribe to Newsletter</h3>
+              <p class="newsletter-description">
+                Get the latest posts and updates delivered to your inbox weekly.
+              </p>
+              <form id="newsletter-form" class="newsletter-form">
+                <input
+                  type="email"
+                  id="email-input"
+                  class="newsletter-input"
+                  placeholder="Your email address"
+                  required
+                  aria-label="Email address"
+                />
+                <button type="submit" class="newsletter-submit-btn">
+                  <i class="fas fa-paper-plane"></i> Subscribe
+                </button>
+              </form>
+              <p class="newsletter-privacy">
+                We respect your privacy. Unsubscribe at any time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3 class="footer-title">About Prose</h3>
+            <p>
+              Prose is a premium blogging platform dedicated to thoughtful
+              content and engaging discussions. We believe in the power of words
+              to inspire, inform, and connect.
+            </p>
+          </div>
+
+          <div class="footer-section">
+            <h3 class="footer-title">Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Explore</a></li>
+              <li><a href="#">Write</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3 class="footer-title">Connect</h3>
+            <div class="footer-social">
+              <a href="#" class="social-icon" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a href="#" class="social-icon" aria-label="Facebook"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a href="#" class="social-icon" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" class="social-icon" aria-label="LinkedIn"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p class="copyright">&copy; 2025 Prose. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <button
+      id="create-post-btn"
+      class="create-post-btn"
+      aria-label="Create new post"
+    >
+      <i class="fas fa-pen"></i>
+    </button>
+
+    <script>
+      // Sample data for prewritten posts
+      const samplePosts = [
+        {
+          id: 1649962800000,
+          content: `<h1>The Future of Artificial Intelligence</h1>
+          <p>As we approach the latter half of the 2020s, artificial intelligence continues to reshape our world in profound ways. From autonomous vehicles to healthcare diagnostics, AI systems are becoming increasingly sophisticated and integrated into our daily lives.</p>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Abstract AI visualization" loading="lazy">
+            <figcaption>The complex neural networks of modern AI systems</figcaption>
+          </figure>
+          <p>One of the most exciting developments is the emergence of multimodal models that can process and generate content across different formats—text, images, audio, and video—with a coherent understanding of context. These advances are opening up new possibilities for creative work and problem-solving.</p>
+          <blockquote>"AI won't replace humans, but humans who use AI effectively may replace those who don't." - A perspective increasingly shared among industry experts</blockquote>
+          <p>What are your thoughts on how AI will continue to evolve? Where do you see the greatest potential for positive impact?</p>`,
+          tags: ["Technology", "AI", "Future", "Innovation"],
+          likes: 42,
+          comments: [
+            {
+              text: "Great article! I'm particularly interested in how AI will transform creative industries like design and music production.",
+              replies: [
+                {
+                  text: "Absolutely! AI-assisted creativity tools are already producing amazing results. Have you tried any of the new music generation platforms?",
+                  replies: [],
+                  author: "MusicTech",
+                },
+              ],
+              author: "DesignThinker",
+            },
+            {
+              text: "While I appreciate the optimism, I think we need more discussion about the ethical implications and potential job displacement.",
+              replies: [
+                {
+                  text: "Valid concern. I believe the key is to focus on policy and education that helps people adapt to these changes.",
+                  replies: [],
+                  author: "PolicyWonk",
+                },
+                {
+                  text: "Studies suggest that historically, technology has created more jobs than it eliminated, though the transition can be difficult for many.",
+                  replies: [],
+                  author: "EconResearcher",
+                },
+              ],
+              author: "EthicsFirst",
+            },
+          ],
+          timestamp: "2025-04-12T15:30:00.000Z",
+          author: "TechFuturist",
+        },
+        {
+          id: 1649876400000,
+          content: `<h1>A Culinary Journey Through Mediterranean Cuisine</h1>
+          <p>There's something magical about Mediterranean food that captures the essence of sun-soaked coastlines and centuries of cultural exchange. From Spanish tapas to Greek mezze, Italian pastas to Moroccan tagines, the region offers an incredible diversity of flavors and techniques.</p>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1590846083693-f23fdede3a7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Mediterranean food spread" loading="lazy">
+            <figcaption>A classic Mediterranean spread with hummus, olives, and fresh bread</figcaption>
+          </figure>
+          <p>What makes Mediterranean cuisine special isn't just its delicious taste, but also its health benefits. Rich in olive oil, fresh vegetables, whole grains, and lean proteins, it's considered one of the healthiest diets in the world.</p>
+          <p>Here's a simple recipe for a classic Greek salad that I love:</p>
+          <ul>
+            <li>Ripe tomatoes, chunked</li>
+            <li>Cucumber, sliced</li>
+            <li>Red onion, thinly sliced</li>
+            <li>Kalamata olives</li>
+            <li>Feta cheese, cubed</li>
+            <li>Extra virgin olive oil</li>
+            <li>Dried oregano</li>
+            <li>Salt and freshly ground pepper</li>
+          </ul>
+          <p>Combine everything in a bowl, drizzle with olive oil, sprinkle with oregano, salt, and pepper, and enjoy!</p>
+          <p>What's your favorite Mediterranean dish? I'd love to hear about your culinary experiences!</p>`,
+          tags: ["Food", "Cooking", "Mediterranean", "Recipes", "Health"],
+          likes: 37,
+          comments: [
+            {
+              text: "I just got back from Greece and I'm already missing the food! Nothing beats authentic souvlaki from a small taverna by the sea.",
+              replies: [
+                {
+                  text: "So jealous! Greek food is amazing. Did you try saganaki? That fried cheese is to die for!",
+                  replies: [],
+                  author: "CheeseEnthusiast",
+                },
+              ],
+              author: "TravelFoodie",
+            },
+            {
+              text: "I make a similar Greek salad but add some capers for an extra punch of flavor. Try it next time!",
+              replies: [
+                {
+                  text: "That's a great tip! I sometimes add a splash of lemon juice too for brightness.",
+                  replies: [],
+                  author: "CulinaryCreator",
+                },
+              ],
+              author: "HomeChef101",
+            },
+          ],
+          timestamp: "2025-04-11T13:20:00.000Z",
+          author: "CulinaryCreator",
+        },
+        {
+          id: 1649790000000,
+          content: `<h1>Sustainable Travel: Exploring the World Responsibly</h1>
+          <p>As global tourism rebounds to record levels in 2025, the conversation around sustainable travel has never been more important. How can we satisfy our wanderlust while minimizing our environmental impact and respecting local communities?</p>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1499363536502-87642509e31b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Sustainable eco-lodge" loading="lazy">
+            <figcaption>An eco-friendly lodge nestled in a forest, powered by renewable energy</figcaption>
+          </figure>
+          <p>Here are five practical tips for more sustainable travel:</p>
+          <ol>
+            <li><strong>Choose eco-friendly accommodations</strong> - Look for hotels and lodges with recognized sustainability certifications.</li>
+            <li><strong>Use public transportation</strong> - When possible, opt for trains, buses, or shared shuttles over individual car rentals.</li>
+            <li><strong>Support local businesses</strong> - Eat at locally-owned restaurants and shop at local markets rather than international chains.</li>
+            <li><strong>Reduce plastic waste</strong> - Bring a reusable water bottle, shopping bag, and toiletry containers.</li>
+            <li><strong>Respect wildlife and natural areas</strong> - Stay on marked trails, maintain safe distances from wildlife, and follow all park regulations.</li>
+          </ol>
+          <p>Remember that sustainable travel isn't about perfection—it's about making mindful choices that collectively reduce our impact.</p>
+          <p>What are your favorite sustainable travel practices or destinations? I'd love to add some new ideas to my own travels!</p>`,
+          tags: [
+            "Travel",
+            "Sustainability",
+            "Ecotourism",
+            "Environment",
+            "Adventure",
+          ],
+          likes: 54,
+          comments: [
+            {
+              text: "I've found that slow travel—spending more time in fewer places—is both more sustainable and more fulfilling. It reduces transportation emissions and lets you really get to know a place.",
+              replies: [
+                {
+                  text: "Completely agree! My best travel experiences have been month-long stays where I could develop a routine and make local connections.",
+                  replies: [
+                    {
+                      text: "Any recommendations for places that are good for longer stays? I'm thinking of trying this approach.",
+                      replies: [],
+                      author: "NewExplorer",
+                    },
+                  ],
+                  author: "EcoAdventurer",
+                },
+              ],
+              author: "SlowTraveler",
+            },
+            {
+              text: "Another tip: choose destinations that need tourism dollars and aren't suffering from overtourism. Many beautiful places are struggling economically while others can't handle more visitors.",
+              replies: [],
+              author: "ConsciousNomad",
+            },
+          ],
+          timestamp: "2025-04-10T09:45:00.000Z",
+          author: "EcoAdventurer",
+        },
+        {
+          id: 1649703600000,
+          content: `<h1>The Rise of Microfinance and Community Banking</h1>
+          <p>Traditional banking has left billions of people underserved worldwide. However, microfinance institutions and community banking initiatives are changing this narrative by providing financial services to those who need them most.</p>
+          <p>Microfinance—the provision of small loans, savings accounts, and other basic financial services to low-income individuals—has shown remarkable success in lifting communities out of poverty. By giving people the capital to start or expand small businesses, these programs create sustainable pathways to financial independence.</p>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1589758438368-0ad531db3366?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Small business owner" loading="lazy">
+            <figcaption>A small business owner who expanded her textile business with microfinancing</figcaption>
+          </figure>
+          <p>The impact extends beyond economic benefits. Research shows that microfinance programs often lead to:</p>
+          <ul>
+            <li>Improved education outcomes for children</li>
+            <li>Better healthcare access for families</li>
+            <li>Increased gender equality and women's empowerment</li>
+            <li>Greater community resilience during economic shocks</li>
+          </ul>
+          <p>Digital technologies are further revolutionizing this space, with mobile banking solutions reaching remote areas that never had access to physical bank branches.</p>
+          <p>Have you had experience with community banking or microfinance? What do you see as the future of inclusive financial systems?</p>`,
+          tags: [
+            "Finance",
+            "Economics",
+            "Social Impact",
+            "Development",
+            "Banking",
+          ],
+          likes: 23,
+          comments: [
+            {
+              text: "I worked with a microfinance organization in Southeast Asia for three years, and the transformation in some communities was remarkable. However, it's not a silver bullet—these programs need proper oversight and consumer protection measures.",
+              replies: [
+                {
+                  text: "That's an important point. There have been some predatory practices in this space. What kind of protections did your organization implement?",
+                  replies: [],
+                  author: "PolicyAnalyst",
+                },
+              ],
+              author: "DevelopmentPro",
+            },
+            {
+              text: "Credit unions are a great example of community banking in action—member-owned, locally controlled, and serving the specific needs of their communities.",
+              replies: [],
+              author: "LocalEconomist",
+            },
+          ],
+          timestamp: "2025-04-09T11:15:00.000Z",
+          author: "FinanceForGood",
+        },
+      ];
+
+      let posts = JSON.parse(localStorage.getItem("blogPosts")) || [];
+
+      console.log("Initial posts from localStorage:", posts);
+
+      // Only add sample posts if there are no existing posts
+      if (posts.length === 0) {
+        console.log("No posts found in localStorage, adding sample posts");
+        posts = samplePosts;
+        localStorage.setItem("blogPosts", JSON.stringify(posts));
+      }
+
+      // Clear localStorage if needed for testing - uncomment this line to reset
+      // localStorage.removeItem("blogPosts");
+
+      // Clear localStorage and reset with sample posts
+      function resetWithSamplePosts() {
+        localStorage.removeItem("blogPosts");
+        posts = samplePosts;
+        localStorage.setItem("blogPosts", JSON.stringify(posts));
+        updateTagFilter();
+        updateTrendingTags();
+        renderPosts();
+        console.log("Posts have been reset with sample content");
+      }
+
+      // Execute reset immediately to ensure we have sample posts
+      resetWithSamplePosts();
+
+      // Rich text editor functions
+      function formatText(command, value = null) {
+        const editor = document.getElementById("editor");
+        editor.focus();
+        if (command === "createLink") {
+          const url = prompt("Enter the URL:");
+          if (url) document.execCommand(command, false, url);
+        } else {
+          document.execCommand(command, false, value);
+        }
+      }
+
+      // Handle media upload with captions
+      function handleMediaUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const editor = document.getElementById("editor");
+            const caption = prompt("Enter image caption (optional):") || "";
+            const figure = document.createElement("figure");
+
+            if (file.type.startsWith("image/")) {
+              figure.innerHTML = `
+                <img src="${
+                  e.target.result
+                }" alt="${caption}" style="max-width: 100%;">
+                ${caption ? `<figcaption>${caption}</figcaption>` : ""}
+              `;
+            } else if (file.type.startsWith("video/")) {
+              figure.innerHTML = `
+                <video src="${
+                  e.target.result
+                }" controls style="max-width: 100%;"></video>
+                ${caption ? `<figcaption>${caption}</figcaption>` : ""}
+              `;
+            }
+            editor.appendChild(figure);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Generate a random initial for user avatar
+      function getRandomInitials() {
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return letters[Math.floor(Math.random() * letters.length)];
+      }
+
+      // Format date relative to now
+      function formatRelativeTime(timestamp) {
+        const now = new Date();
+        const postDate = new Date(timestamp);
+        const diffSeconds = Math.floor((now - postDate) / 1000);
+
+        if (diffSeconds < 60) return "just now";
+        if (diffSeconds < 3600)
+          return `${Math.floor(diffSeconds / 60)} min ago`;
+        if (diffSeconds < 86400)
+          return `${Math.floor(diffSeconds / 3600)} hr ago`;
+        if (diffSeconds < 172800) return "yesterday";
+
+        return postDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      // Submit new post
+      function submitPost() {
+        const editor = document.getElementById("editor");
+        const tagsInput = document.getElementById("tags-input");
+        const content = editor.innerHTML.trim();
+        const tags = tagsInput.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => t);
+
+        if (!content) return alert("Please add some content!");
+
+        const post = {
+          id: Date.now(),
+          content: content,
+          tags: tags,
+          likes: 0,
+          comments: [],
+          timestamp: new Date().toISOString(),
+          author: "You",
+        };
+
+        posts.unshift(post);
+        localStorage.setItem("blogPosts", JSON.stringify(posts));
+        editor.innerHTML = "";
+        tagsInput.value = "";
+        updateTagFilter();
+        updateTrendingTags();
+        renderPosts();
+      }
+
+      // Update trending tags in sidebar
+      function updateTrendingTags() {
+        const tagCounts = {};
+        posts.forEach((post) => {
+          post.tags.forEach((tag) => {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+          });
+        });
+
+        const trendingTags = Object.keys(tagCounts)
+          .sort((a, b) => tagCounts[b] - tagCounts[a])
+          .slice(0, 10);
+
+        const container = document.getElementById("trending-tags");
+        container.innerHTML = trendingTags.length
+          ? trendingTags
+              .map(
+                (tag) =>
+                  `<span class="tag" onclick="filterByTag('${tag}')">${tag}</span>`
+              )
+              .join("")
+          : "<p>No tags yet</p>";
+      }
+
+      // Render comments recursively
+      function renderComments(comments, postId, parentIndex = null) {
+        if (!comments.length) return "";
+
+        return comments
+          .map((comment, index) => {
+            const commentId =
+              parentIndex !== null ? `${parentIndex}-${index}` : `${index}`;
+            const initial = comment.author
+              ? comment.author[0].toUpperCase()
+              : getRandomInitials();
+
+            return `
+              <div class="comment" role="comment">
+                <div class="comment-avatar">${initial}</div>
+                <div class="comment-content">
+                  <div class="comment-header">
+                    <span class="comment-author">${
+                      comment.author || "Anonymous"
+                    }</span>
+                    <span class="comment-time">a few moments ago</span>
+                  </div>
+                  <div class="comment-body">${comment.text}</div>
+                  <div class="comment-actions">
+                    <button class="comment-action" onclick="toggleReplyForm('${postId}-${commentId}')" aria-label="Reply to comment">Reply</button>
+                    <button class="comment-action" onclick="deleteComment(${postId}, ${
+              parentIndex !== null ? `'${parentIndex}'` : "null"
+            }, ${index})" aria-label="Delete comment">Delete</button>
+                  </div>
+                  <div id="reply-form-${postId}-${commentId}" class="reply-form" style="display: none;">
+                    <input type="text" id="reply-input-${postId}-${commentId}" class="reply-input" placeholder="Write a reply..." aria-label="Reply input">
+                    <button class="reply-submit" onclick="addReply(${postId}, ${
+              parentIndex !== null ? `'${parentIndex}'` : "null"
+            }, ${index})">Reply</button>
+                  </div>
+                  ${
+                    comment.replies.length
+                      ? `<div class="comment-replies">${renderComments(
+                          comment.replies,
+                          postId,
+                          commentId
+                        )}</div>`
+                      : ""
+                  }
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      // Render posts
+      function renderPosts() {
+        const container = document.getElementById("posts-container");
+        const searchTerm = document
+          .getElementById("search-bar")
+          .value.toLowerCase();
+        const selectedTag = document.getElementById("tag-filter").value;
+
+        const filteredPosts = posts.filter((post) => {
+          const matchesSearch =
+            post.content.toLowerCase().includes(searchTerm) ||
+            post.tags.some((tag) => tag.toLowerCase().includes(searchTerm));
+          const matchesTag = !selectedTag || post.tags.includes(selectedTag);
+          return matchesSearch && matchesTag;
+        });
+
+        container.innerHTML = "";
+
+        if (filteredPosts.length === 0) {
+          container.innerHTML = `
+            <div class="post">
+              <div class="post-inner">
+                <p>No posts found. Be the first to create a post!</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        filteredPosts.forEach((post) => {
+          // Track if user has liked this post
+          post.userLiked = post.userLiked || false;
+
+          const postUrl = `${window.location.href}#post-${post.id}`;
+          const postElement = document.createElement("div");
+          postElement.className = "post";
+          postElement.id = `post-${post.id}`;
+          postElement.setAttribute("role", "article");
+
+          const authorInitial = post.author
+            ? post.author[0].toUpperCase()
+            : "A";
+          const formattedDate = formatRelativeTime(post.timestamp);
+          // Use filled or empty heart based on like status
+          const heartIcon = post.userLiked ? "fas fa-heart" : "far fa-heart";
+
+          postElement.innerHTML = `
+            <div class="post-inner">
+              <div class="post-meta">
+                <div class="comment-avatar">${authorInitial}</div>
+                <div class="writer-info">
+                  <div class="writer-name">
+                    ${post.author || "Anonymous"}
+                    ${
+                      post.author !== "You"
+                        ? `<button class="follow-btn ${
+                            post.userFollowing ? "following" : ""
+                          }" 
+                      onclick="toggleFollow('${post.author}')" aria-label="${
+                            post.userFollowing ? "Unfollow" : "Follow"
+                          } ${post.author}">
+                        ${post.userFollowing ? "Following" : "Follow"}
+                      </button>`
+                        : ""
+                    }
+                  </div>
+                  <div class="post-date">
+                    <i class="far fa-clock"></i> ${formattedDate}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="post-content">${post.content}</div>
+              
+              ${
+                post.tags.length
+                  ? `
+                  <div class="tags">
+                      ${post.tags
+                        .map(
+                          (tag) =>
+                            `<span class="tag" onclick="filterByTag('${tag}')">${tag}</span>`
+                        )
+                        .join("")}
+                  </div>
+                `
+                  : ""
+              }
+            </div>
+            
+            <div class="post-actions">
+              <div class="post-action-buttons">
+                <button class="action-btn" onclick="toggleLike(${
+                  post.id
+                })" aria-label="${post.userLiked ? "Unlike" : "Like"} post">
+                  <i class="${heartIcon}"></i> <span>${post.likes}</span>
+                </button>
+                
+                <button class="action-btn" onclick="toggleComments(${
+                  post.id
+                })" aria-label="Show comments">
+                  <i class="far fa-comment"></i> <span class="comment-count-badge">${
+                    post.comments.length
+                  }</span>
+                </button>
+              </div>
+
+              <div class="social-buttons">
+                <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  "Check out this post: " +
+                    post.content.substring(0, 100) +
+                    "..."
+                )}&url=${encodeURIComponent(postUrl)}" 
+                   class="social-button social-twitter" target="_blank" aria-label="Share on Twitter">
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  postUrl
+                )}" 
+                   class="social-button social-facebook" target="_blank" aria-label="Share on Facebook">
+                   <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+                  postUrl
+                )}" 
+                   class="social-button social-linkedin" target="_blank" aria-label="Share on LinkedIn">
+                   <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
+                  postUrl
+                )}&description=${encodeURIComponent(
+            post.content.substring(0, 100) + "..."
+          )}" 
+                   class="social-button social-pinterest" target="_blank" aria-label="Share on Pinterest">
+                   <i class="fab fa-pinterest-p"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div id="comments-section-${post.id}" class="comments-section">
+              <div class="comments-header">
+                <h2 class="comments-title">Comments</h2>
+                <span class="comments-count">${post.comments.length} comment${
+            post.comments.length !== 1 ? "s" : ""
+          }</span>
+              </div>
+              
+              <div class="comment-input-container">
+                <div class="comment-avatar">Y</div>
+                <div class="comment-form">
+                  <input type="text" id="comment-input-${
+                    post.id
+                  }" class="comment-input" placeholder="Add a comment..." aria-label="Add comment">
+                  <button class="comment-submit" onclick="addComment(${
+                    post.id
+                  })">Comment</button>
+                </div>
+              </div>
+              
+              <div class="comments-list" id="comments-${post.id}">
+                ${renderComments(post.comments, post.id)}
+              </div>
+            </div>
+          `;
+          container.appendChild(postElement);
+
+          // Lazy load media
+          const media = postElement.querySelectorAll("img, video");
+          media.forEach((m) => m.setAttribute("loading", "lazy"));
+        });
+      }
+
+      // Update tag filter options
+      function updateTagFilter() {
+        const tagFilter = document.getElementById("tag-filter");
+        const allTags = [...new Set(posts.flatMap((post) => post.tags))];
+        tagFilter.innerHTML =
+          '<option value="">All Tags</option>' +
+          allTags
+            .map((tag) => `<option value="${tag}">${tag}</option>`)
+            .join("");
+      }
+
+      // Filter by tag
+      function filterByTag(tag) {
+        document.getElementById("tag-filter").value = tag;
+        renderPosts();
+      }
+
+      // Like post
+      function likePost(postId) {
+        const post = posts.find((p) => p.id === postId);
+        if (post) {
+          post.likes++;
+          localStorage.setItem("blogPosts", JSON.stringify(posts));
+          renderPosts();
+        }
+      }
+
+      // Add top-level comment
+      function addComment(postId) {
+        const input = document.getElementById(`comment-input-${postId}`);
+        const text = input.value.trim();
+        if (text) {
+          const post = posts.find((p) => p.id === postId);
+          if (post) {
+            post.comments.push({ text, replies: [], author: "You" });
+            localStorage.setItem("blogPosts", JSON.stringify(posts));
+            input.value = "";
+            renderPosts();
+          }
+        }
+      }
+
+      // Toggle reply form
+      function toggleReplyForm(formId) {
+        const replyForm = document.getElementById(`reply-form-${formId}`);
+        replyForm.style.display =
+          replyForm.style.display === "none" ? "block" : "none";
+      }
+
+      // Add reply to comment
+      function addReply(postId, parentIndex, commentIndex) {
+        const inputId = parentIndex
+          ? `reply-input-${postId}-${parentIndex}-${commentIndex}`
+          : `reply-input-${postId}-${commentIndex}`;
+        const input = document.getElementById(inputId);
+        const text = input.value.trim();
+        if (text) {
+          const post = posts.find((p) => p.id === postId);
+          if (post) {
+            let targetComments = post.comments;
+            if (parentIndex !== null) {
+              const indices = parentIndex.split("-").map(Number);
+              indices.forEach((i) => {
+                targetComments = targetComments[i].replies;
+              });
+            }
+            targetComments[commentIndex].replies.push({
+              text,
+              replies: [],
+              author: "You",
+            });
+            localStorage.setItem("blogPosts", JSON.stringify(posts));
+            input.value = "";
+            renderPosts();
+          }
+        }
+      }
+
+      // Delete comment
+      function deleteComment(postId, parentIndex, commentIndex) {
+        const post = posts.find((p) => p.id === postId);
+        if (post) {
+          let targetComments = post.comments;
+          if (parentIndex !== null) {
+            const indices = parentIndex.split("-").map(Number);
+            indices.forEach((i) => {
+              targetComments = targetComments[i].replies;
+            });
+          }
+          targetComments.splice(commentIndex, 1);
+          localStorage.setItem("blogPosts", JSON.stringify(posts));
+          renderPosts();
+        }
+      }
+
+      // Toggle like on a post
+      function toggleLike(postId) {
+        const post = posts.find((p) => p.id === postId);
+        if (post) {
+          if (post.userLiked) {
+            // Unlike
+            post.userLiked = false;
+            post.likes--;
+          } else {
+            // Like
+            post.userLiked = true;
+            post.likes++;
+          }
+          localStorage.setItem("blogPosts", JSON.stringify(posts));
+          renderPosts();
+        }
+      }
+
+      // Toggle comments visibility
+      function toggleComments(postId) {
+        const commentsSection = document.getElementById(
+          `comments-section-${postId}`
+        );
+        if (commentsSection) {
+          commentsSection.style.display =
+            commentsSection.style.display === "none" ||
+            commentsSection.style.display === ""
+              ? "block"
+              : "none";
+        }
+      }
+
+      // Toggle follow button for a creator
+      function toggleFollow(authorName) {
+        // Find all posts by this author
+        posts.forEach((post) => {
+          if (post.author === authorName) {
+            post.userFollowing = !post.userFollowing;
+          }
+        });
+
+        localStorage.setItem("blogPosts", JSON.stringify(posts));
+        renderPosts();
+      }
+
+      // Handle tab navigation with different content display
+      document.querySelectorAll(".tab").forEach((tab, index) => {
+        tab.addEventListener("click", function () {
+          document.querySelector(".tab.active").classList.remove("active");
+          this.classList.add("active");
+
+          // Get the tab name from the text content
+          const tabName = this.textContent.trim();
+
+          // Filter posts based on selected tab
+          if (tabName === "Following") {
+            // Show only posts from authors the user follows
+            const followingPosts = posts.filter((post) => post.userFollowing);
+            renderFilteredPosts(followingPosts);
+          } else if (tabName === "Trending") {
+            // Sort posts by likes and show the most popular ones
+            const trendingPosts = [...posts].sort((a, b) => b.likes - a.likes);
+            renderFilteredPosts(trendingPosts);
+          } else {
+            // For You tab - show all posts (default behavior)
+            renderPosts();
+          }
+        });
+      });
+
+      // Render posts with a specific filter
+      function renderFilteredPosts(filteredPosts) {
+        const container = document.getElementById("posts-container");
+        const searchTerm = document
+          .getElementById("search-bar")
+          .value.toLowerCase();
+        const selectedTag = document.getElementById("tag-filter").value;
+
+        // Apply search and tag filters to the already filtered posts
+        const finalFilteredPosts = filteredPosts.filter((post) => {
+          const matchesSearch =
+            post.content.toLowerCase().includes(searchTerm) ||
+            post.tags.some((tag) => tag.toLowerCase().includes(searchTerm));
+          const matchesTag = !selectedTag || post.tags.includes(selectedTag);
+          return matchesSearch && matchesTag;
+        });
+
+        container.innerHTML = "";
+
+        if (finalFilteredPosts.length === 0) {
+          container.innerHTML = `
+            <div class="post">
+              <div class="post-inner">
+                <p>No posts found. ${
+                  document.querySelector(".tab.active").textContent ===
+                  "Following"
+                    ? "Follow some writers to see their posts here!"
+                    : "Be the first to create a post!"
+                }
+                </p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        // Rest of rendering logic is the same as renderPosts
+        // but using finalFilteredPosts instead of all posts
+        finalFilteredPosts.forEach((post) => {
+          // Track if user has liked this post
+          post.userLiked = post.userLiked || false;
+
+          const postUrl = `${window.location.href}#post-${post.id}`;
+          const postElement = document.createElement("div");
+          postElement.className = "post";
+          postElement.id = `post-${post.id}`;
+          postElement.setAttribute("role", "article");
+
+          const authorInitial = post.author
+            ? post.author[0].toUpperCase()
+            : "A";
+          const formattedDate = formatRelativeTime(post.timestamp);
+          // Use filled or empty heart based on like status
+          const heartIcon = post.userLiked ? "fas fa-heart" : "far fa-heart";
+
+          postElement.innerHTML = `
+            <div class="post-inner">
+              <div class="post-meta">
+                <div class="comment-avatar">${authorInitial}</div>
+                <div class="writer-info">
+                  <div class="writer-name">
+                    ${post.author || "Anonymous"}
+                    ${
+                      post.author !== "You"
+                        ? `<button class="follow-btn ${
+                            post.userFollowing ? "following" : ""
+                          }" 
+                      onclick="toggleFollow('${post.author}')" aria-label="${
+                            post.userFollowing ? "Unfollow" : "Follow"
+                          } ${post.author}">
+                        ${post.userFollowing ? "Following" : "Follow"}
+                      </button>`
+                        : ""
+                    }
+                  </div>
+                  <div class="post-date">
+                    <i class="far fa-clock"></i> ${formattedDate}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="post-content">${post.content}</div>
+              
+              ${
+                post.tags.length
+                  ? `
+                  <div class="tags">
+                      ${post.tags
+                        .map(
+                          (tag) =>
+                            `<span class="tag" onclick="filterByTag('${tag}')">${tag}</span>`
+                        )
+                        .join("")}
+                  </div>
+                `
+                  : ""
+              }
+            </div>
+            
+            <div class="post-actions">
+              <div class="post-action-buttons">
+                <button class="action-btn" onclick="toggleLike(${
+                  post.id
+                })" aria-label="${post.userLiked ? "Unlike" : "Like"} post">
+                  <i class="${heartIcon}"></i> <span>${post.likes}</span>
+                </button>
+                
+                <button class="action-btn" onclick="toggleComments(${
+                  post.id
+                })" aria-label="Show comments">
+                  <i class="far fa-comment"></i> <span class="comment-count-badge">${
+                    post.comments.length
+                  }</span>
+                </button>
+              </div>
+
+              <div class="social-buttons">
+                <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  "Check out this post: " +
+                    post.content.substring(0, 100) +
+                    "..."
+                )}&url=${encodeURIComponent(postUrl)}" 
+                   class="social-button social-twitter" target="_blank" aria-label="Share on Twitter">
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  postUrl
+                )}" 
+                   class="social-button social-facebook" target="_blank" aria-label="Share on Facebook">
+                   <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+                  postUrl
+                )}" 
+                   class="social-button social-linkedin" target="_blank" aria-label="Share on LinkedIn">
+                   <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
+                  postUrl
+                )}&description=${encodeURIComponent(
+            post.content.substring(0, 100) + "..."
+          )}" 
+                   class="social-button social-pinterest" target="_blank" aria-label="Share on Pinterest">
+                   <i class="fab fa-pinterest-p"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div id="comments-section-${post.id}" class="comments-section">
+              <div class="comments-header">
+                <h2 class="comments-title">Comments</h2>
+                <span class="comments-count">${post.comments.length} comment${
+            post.comments.length !== 1 ? "s" : ""
+          }</span>
+              </div>
+              
+              <div class="comment-input-container">
+                <div class="comment-avatar">Y</div>
+                <div class="comment-form">
+                  <input type="text" id="comment-input-${
+                    post.id
+                  }" class="comment-input" placeholder="Add a comment..." aria-label="Add comment">
+                  <button class="comment-submit" onclick="addComment(${
+                    post.id
+                  })">Comment</button>
+                </div>
+              </div>
+              
+              <div class="comments-list" id="comments-${post.id}">
+                ${renderComments(post.comments, post.id)}
+              </div>
+            </div>
+          `;
+          container.appendChild(postElement);
+
+          // Lazy load media
+          const media = postElement.querySelectorAll("img, video");
+          media.forEach((m) => m.setAttribute("loading", "lazy"));
+        });
+      }
+
+      // Handle tab navigation
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", function () {
+          document.querySelector(".tab.active").classList.remove("active");
+          this.classList.add("active");
+        });
+      });
+
+      // Live search and filter
+      document
+        .getElementById("search-bar")
+        .addEventListener("input", renderPosts);
+      document
+        .getElementById("tag-filter")
+        .addEventListener("change", renderPosts);
+
+      // Toggle post form visibility
+      document
+        .getElementById("create-post-btn")
+        .addEventListener("click", function () {
+          document.getElementById("post-form").style.display = "block";
+        });
+
+      document
+        .querySelector(".close-form-btn")
+        .addEventListener("click", function () {
+          document.getElementById("post-form").style.display = "none";
+        });
+
+      // Initial setup
+      updateTagFilter();
+      updateTrendingTags();
+      renderPosts();
+
+      // Toggle profile dropdown menu
+      document
+        .querySelector(".profile-button")
+        .addEventListener("click", function () {
+          document
+            .getElementById("profile-dropdown-menu")
+            .classList.toggle("show");
+        });
+
+      // Close profile dropdown menu when clicking outside
+      document.addEventListener("click", function (event) {
+        const profileDropdown = document.querySelector(".profile-dropdown");
+        if (!profileDropdown.contains(event.target)) {
+          document
+            .getElementById("profile-dropdown-menu")
+            .classList.remove("show");
+        }
+      });
+    </script>
+  </body>
+</html>

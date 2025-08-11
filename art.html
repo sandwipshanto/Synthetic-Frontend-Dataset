@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtVista - Explore Masterpieces</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'art-primary': '#e74c3c',
+                    },
+                    transitionProperty: {
+                        'transform': 'transform',
+                    },
+                    aspectRatio: {
+                        '4/3': '4 / 3',
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Source Sans Pro', 'sans-serif'],
+                    },
+                    keyframes: {
+                        pulse: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.5 },
+                        },
+                        heartbeat: {
+                            '0%': { transform: 'scale(1)' },
+                            '14%': { transform: 'scale(1.3)' },
+                            '28%': { transform: 'scale(1)' },
+                            '42%': { transform: 'scale(1.3)' },
+                            '70%': { transform: 'scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0, transform: 'translateY(10px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        slideInRight: {
+                            '0%': { transform: 'translateX(20px)', opacity: 0 },
+                            '100%': { transform: 'translateX(0)', opacity: 1 }
+                        },
+                        slideInLeft: {
+                            '0%': { transform: 'translateX(-20px)', opacity: 0 },
+                            '100%': { transform: 'translateX(0)', opacity: 1 }
+                        },
+                        slideInUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: 0 },
+                            '100%': { transform: 'translateY(0)', opacity: 1 }
+                        },
+                        slideInDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: 0 },
+                            '100%': { transform: 'translateY(0)', opacity: 1 }
+                        },
+                        zoomIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: 0 },
+                            '100%': { transform: 'scale(1)', opacity: 1 }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-500px 0' },
+                            '100%': { backgroundPosition: '500px 0' }
+                        }
+                    },
+                    animation: {
+                        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        heartbeat: 'heartbeat 1s ease-in-out',
+                        fadeIn: 'fadeIn 0.5s ease-out forwards',
+                        slideInRight: 'slideInRight 0.5s ease-out forwards',
+                        slideInLeft: 'slideInLeft 0.5s ease-out forwards',
+                        slideInUp: 'slideInUp 0.5s ease-out forwards',
+                        slideInDown: 'slideInDown 0.5s ease-out forwards',
+                        zoomIn: 'zoomIn 0.5s ease-out forwards',
+                        float: 'float 3s ease-in-out infinite',
+                        shimmer: 'shimmer 2s infinite linear'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth scrolling for the entire page */
+        html {
+            scroll-behavior: smooth;
+            overflow-y: scroll;
+        }
+
+        /* Custom scrollbar for modern browsers */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 241, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(136, 136, 136, 0.4);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(136, 136, 136, 0.5);
+        }
+
+        /* Dark mode scrollbar */
+        .dark::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.2);
+        }
+        
+        .dark::-webkit-scrollbar-thumb {
+            background: rgba(90, 90, 90, 0.4);
+        }
+        
+        .dark::-webkit-scrollbar-thumb:hover {
+            background: rgba(90, 90, 90, 0.5);
+        }
+        
+        /* Base typography */
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            letter-spacing: 0.01em;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .dark body {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        h1, h2, h3, h4, h5, .font-serif {
+            font-family: 'Playfair Display', serif;
+            line-height: 1.2;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .artist-name {
+            font-weight: 300;
+            font-style: italic;
+        }
+        
+        /* Artistic frame effect for artwork cards with animation */
+        .art-frame {
+            position: relative;
+            border: 1px solid rgba(210, 210, 210, 0.4);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+        
+        .art-frame::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 1px solid #18171733;
+            z-index: -1;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(1.05);
+        }
+        
+        .art-frame:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .dark .art-frame {
+            border-color: rgba(80, 80, 80, 0.4);
+        }
+        
+        .dark .art-frame::before {
+            border-color: rgba(70, 70, 70, 0.2);
+        }
+        
+        /* Gallery name with artistic underline and animation */
+        .artistic-title {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .artistic-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            height: 3px;
+            width: 0;
+            background: linear-gradient(90deg, var(--art-primary-color) 0%, transparent 100%);
+            transition: width 0.6s ease;
+        }
+        
+        .artistic-title:hover::after {
+            width: 80%;
+        }
+        
+        .dark .artistic-title::after {
+            background: linear-gradient(90deg, var(--art-primary-color) 0%, transparent 100%);
+        }
+        
+        /* Color palette variables */
+        :root {
+            --art-primary-color: #e74c3c;
+        }
+        
+        /* Cool hover effect for art pieces - replacing the vibrating animation */
+        .art-frame img {
+            transition: transform 0.5s ease, filter 0.5s ease;
+        }
+        
+        .art-frame:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 5px 10px rgba(0, 0, 0, 0.08);
+            transform: translateY(-5px);
+        }
+        
+        .art-frame:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.05);
+        }
+        
+        .dark .art-frame:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Shimmer effect for loading states */
+        .shimmer {
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.1), 
+                rgba(255,255,255,0.2), 
+                rgba(255,255,255,0.1));
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+
+        .dark .shimmer {
+            background: linear-gradient(90deg, 
+                rgba(50,50,50,0.1), 
+                rgba(50,50,50,0.2), 
+                rgba(50,50,50,0.1));
+            background-size: 200% 100%;
+        }
+
+        /* Animated page transitions */
+        .page-transition-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .page-transition-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        
+        /* Staggered entry animations for gallery items */
+        @media (prefers-reduced-motion: no-preference) {
+            .staggered-item {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            
+            .staggered-item.revealed {
+                animation: staggerReveal 0.6s ease forwards;
+            }
+            
+            @keyframes staggerReveal {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        /* Smooth image reveal animation */
+        .image-reveal {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-reveal img {
+            transition: transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        
+        .image-reveal::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e74c3c;
+            transform: scaleX(1);
+            transform-origin: right;
+            transition: transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+            z-index: 1;
+        }
+        
+        .image-reveal.loaded::after {
+            transform: scaleX(0);
+        }
+        
+        /* Modal animation enhancements */
+        .modal-backdrop {
+            backdrop-filter: blur(0px);
+            transition: backdrop-filter 0.5s ease;
+        }
+        
+        .modal-backdrop.show {
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            transform: scale(0.95) translateY(10px);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+        }
+        
+        .modal-content.show {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Button press effect */
+        .btn-press {
+            transform: translateY(0);
+            transition: transform 0.15s ease;
+        }
+        
+        .btn-press:active {
+            transform: translateY(2px);
+        }
+
+        /* Loading indicator animation */
+        @keyframes dot-elastic {
+            0% { transform: scale(1, 1); }
+            25% { transform: scale(1, 1.5); }
+            50% { transform: scale(1, 0.67); }
+            75% { transform: scale(1, 1); }
+            100% { transform: scale(1, 1); }
+        }
+        
+        .dot-elastic {
+            position: relative;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: currentColor;
+            animation: dot-elastic 1s infinite linear;
+        }
+        
+        .dot-elastic::before,
+        .dot-elastic::after {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: currentColor;
+        }
+        
+        .dot-elastic::before {
+            left: -15px;
+            animation: dot-elastic 1s infinite;
+            animation-delay: 0.25s;
+        }
+        
+        .dot-elastic::after {
+            left: 15px;
+            animation: dot-elastic 1s infinite;
+            animation-delay: 0.5s;
+        }
+
+        /* Parallax scrolling effect */
+        .parallax-container {
+            perspective: 1px;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+        
+        .parallax-layer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+        
+        .parallax-bg {
+            transform: translateZ(-1px) scale(2);
+        }
+        
+        .parallax-content {
+            transform: translateZ(0);
+        }
+
+        /* Particles background effect (subtle) */
+        .art-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.6;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: var(--art-primary-color);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation-name: float-particle;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        /* Custom focus styles for accessibility */
+        :focus {
+            outline: 2px solid var(--art-primary-color);
+            outline-offset: 2px;
+        }
+
+        .focus-visible:focus:not(:focus-visible) {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-6 transition-colors duration-300">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-10 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 md:mb-0 relative">
+                <div class="mr-3 text-3xl text-art-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 transform rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-serif font-bold text-gray-800 tracking-tight artistic-title">ArtVista</h1>
+                    <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 font-light tracking-wide italic">Explore the world's masterpieces</p>
+                </div>
+                <div class="absolute -top-5 -right-12 text-3xl opacity-30 text-art-primary rotate-12 hidden md:block">✦</div>
+                <div class="absolute -bottom-3 -left-7 text-2xl opacity-20 text-art-primary -rotate-6 hidden md:block">✦</div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="favoritesBtn" class="px-4 py-2 flex items-center rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300 text-gray-700 dark:text-gray-300 font-medium">
+                    <span class="text-art-primary mr-1">♥</span>
+                    <span>Favorites</span>
+                </button>
+                <button id="darkModeToggle" class="p-2 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-indigo-600 dark:to-purple-800 text-gray-700 dark:text-amber-200 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-rotate-6" aria-label="Toggle dark mode">
+                    <!-- Light mode - Moon icon (shown in light mode) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 dark:hidden filter drop-shadow-md" viewBox="0 0 24 24" fill="none">
+                        <path d="M21.5287 15.9294C21.3687 15.6594 20.9187 15.2394 19.7987 15.4394C19.1787 15.5494 18.5487 15.5994 17.9187 15.5694C15.5887 15.4694 13.4787 14.3994 12.0087 12.7494C10.7087 11.2994 9.90873 9.40938 9.89873 7.36938C9.89873 6.22938 10.1187 5.12938 10.5687 4.08938C11.0087 3.07938 10.6987 2.54938 10.4787 2.32938C10.2487 2.09938 9.70873 1.77938 8.64873 2.21938C4.55873 3.93938 2.02873 8.03938 2.32873 12.4294C2.63873 16.8594 6.13873 20.7494 10.5587 21.5294C11.3087 21.6594 12.0787 21.7294 12.8787 21.7294C16.4287 21.7294 19.7487 19.8394 21.2787 16.7494C21.7087 15.9394 21.6987 16.1994 21.5287 15.9294Z" fill="url(#paint0_linear_moon)"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_moon" x1="12" y1="2" x2="12" y2="21.7294" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#4C51BF"/>
+                                <stop offset="1" stop-color="#6B46C1"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    
+                    <!-- Dark mode - Sun icon with rays (shown in dark mode) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden dark:block" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="5" fill="url(#paint0_radial_sun)">
+                            <animate attributeName="opacity" values="0.8;1;0.8" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <g>
+                            <line x1="12" y1="3" x2="12" y2="5" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="y1" values="3;2;3" dur="2s" repeatCount="indefinite"/>
+                            </line>
+                            <line x1="12" y1="19" x2="12" y2="21" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="y2" values="21;22;21" dur="2s" repeatCount="indefinite"/>
+                            </line>
+                            <line x1="3" y1="12" x2="5" y2="12" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="x1" values="3;2;3" dur="2s" repeatCount="indefinite"/>
+                            </line>
+                            <line x1="19" y1="12" x2="21" y2="12" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="x2" values="21;22;21" dur="2s" repeatCount="indefinite"/>
+                            </line>
+                            
+                            <!-- Diagonal rays -->
+                            <line x1="5.636" y1="5.636" x2="7.05" y2="7.05" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite"/>
+                            </line>
+                            <line x1="16.95" y1="16.95" x2="18.364" y2="18.364" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite" begin="0.2s"/>
+                            </line>
+                            <line x1="5.636" y1="18.364" x2="7.05" y2="16.95" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite" begin="0.4s"/>
+                            </line>
+                            <line x1="16.95" y1="7.05" x2="18.364" y2="5.636" stroke="url(#ray_gradient)" stroke-width="2" stroke-linecap="round">
+                                <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite" begin="0.6s"/>
+                            </line>
+                        </g>
+                        <defs>
+                            <radialGradient id="paint0_radial_sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 12) rotate(90) scale(6)">
+                                <stop stop-color="#FCD34D"/>
+                                <stop offset="1" stop-color="#F59E0B"/>
+                            </radialGradient>
+                            <linearGradient id="ray_gradient" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#F59E0B"/>
+                                <stop offset="1" stop-color="#FCD34D"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="mb-8 relative">
+            <div class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input type="text" id="searchInput" placeholder="Search by artist or genre..." 
+                class="w-full p-3 rounded-full border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-art-primary dark:focus:ring-art-primary shadow-sm transition dark:bg-gray-800 dark:text-gray-200 pl-10 pr-10 text-base">
+            <div id="searchSpinner" class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden">
+                <svg class="animate-spin h-5 w-5 text-art-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 9.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="text-center mb-8 opacity-90">
+            <div class="flex justify-center gap-1 mb-2">
+                <span class="inline-block w-3 h-3 bg-red-500 rounded-full opacity-70"></span>
+                <span class="inline-block w-3 h-3 bg-blue-500 rounded-full opacity-70"></span>
+                <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full opacity-70"></span>
+                <span class="inline-block w-3 h-3 bg-green-500 rounded-full opacity-70"></span>
+            </div>
+            <p class="font-serif text-sm text-gray-500 dark:text-gray-400 italic">Curated collection of timeless masterpieces</p>
+        </div>
+
+        <div id="galleryContainer" class="min-h-[200px]">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 py-6"
+                id="galleryGrid">
+                <!-- Artwork items will be generated by JavaScript -->
+            </div>
+
+            <div id="loadingIndicator" class="hidden flex justify-center my-8">
+                <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
+                    <svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 9.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <span>Loading art...</span>
+                </div>
+            </div>
+
+            <div id="noResultsMessage" class="hidden text-center py-10 text-gray-500 dark:text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 opacity-50" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-xl font-serif italic text-gray-500 dark:text-gray-400">No artworks found matching your
+                    search</p>
+            </div>
+
+            <div class="flex justify-center mt-6">
+                <button id="loadMoreBtn"
+                    class="hidden px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-700 transform hover:-translate-y-0.5 font-medium tracking-wide">
+                    Load More
+                </button>
+            </div>
+        </div>
+
+        <div id="artModal"
+            class="fixed inset-0 z-50 hidden opacity-0 transition-all duration-300 ease-out"
+            role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="fixed inset-0 bg-black/70 dark:bg-black/80 backdrop-blur-md"></div>
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <div
+                        class="relative w-full max-w-5xl transform scale-95 overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-2xl transition-all duration-500 ease-out">
+                        <div class="absolute inset-0 bg-gradient-to-br from-transparent to-black/10 dark:to-black/30 pointer-events-none z-0"></div>
+                        <button id="closeModal"
+                            class="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-gray-700 dark:text-gray-300 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+                            aria-label="Close modal">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <div class="grid md:grid-cols-2 gap-0">
+                            <div class="relative overflow-hidden bg-black flex items-center">
+                                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_75%)]"></div>
+                                <img id="modalImage" src="" alt="" class="w-full h-full object-contain max-h-[80vh] md:max-h-[90vh] opacity-0 transition-opacity duration-500">
+                            </div>
+                            <div id="modalInfo" class="p-8 text-left dark:text-gray-200 relative overflow-y-auto max-h-[50vh] md:max-h-[90vh]">
+                                <div class="space-y-6">
+                                    <div>
+                                        <h2 id="modalTitle" class="font-serif text-3xl md:text-4xl font-bold mb-1 dark:text-gray-100 relative inline-block">
+                                            ${art.title}
+                                            <span class="absolute -top-4 -right-8 text-xs font-sans bg-art-primary text-white px-2 py-0.5 rounded-full opacity-80">${art.genre}</span>
+                                        </h2>
+                                        <p class="text-lg italic text-gray-600 dark:text-gray-400">${art.artist}</p>
+                                    </div>
+                                    
+                                    <div class="w-1/6 h-0.5 bg-gradient-to-r from-art-primary to-transparent"></div>
+                                    
+                                    <div class="prose prose-lg dark:prose-invert max-w-none">
+                                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">${art.description}</p>
+                                    </div>
+                                    
+                                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-3">
+                                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Artwork Details</h3>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">Year</div>
+                                                <div class="text-gray-800 dark:text-gray-200">${art.year || "Unknown"}</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">Medium</div>
+                                                <div class="text-gray-800 dark:text-gray-200">${art.medium || "Oil on canvas"}</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">Dimensions</div>
+                                                <div class="text-gray-800 dark:text-gray-200">${art.dimensions || "Not specified"}</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">Location</div>
+                                                <div class="text-gray-800 dark:text-gray-200">${art.location || "Private collection"}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Historical Context</h3>
+                                        <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                                            ${art.historicalContext || `This ${art.genre} masterpiece by ${art.artist} exemplifies the artistic movements of its time. The work showcases the characteristic style and techniques that made ${art.artist} renowned in art history.`}
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="flex flex-wrap gap-3 pt-4">
+                                        <button class="favorite-btn flex items-center gap-2 px-4 py-2 rounded-full ${isFavorite ? 'bg-art-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} hover:shadow-md transition-all duration-300 font-medium" data-modal-id="${art.id}">
+                                            <span class="text-lg">${isFavorite ? '♥' : '♡'}</span>
+                                            <span>${isFavorite ? 'Remove from favorites' : 'Add to favorites'}</span>
+                                        </button>
+                                        
+                                        <button class="share-btn flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:shadow-md transition-all duration-300 font-medium">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                            </svg>
+                                            <span>Share</span>
+                                        </button>
+                                        
+                                        <a href="${art.image}" target="_blank" class="view-full-btn flex items-center gap-2 px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:shadow-md transition-all duration-300 font-medium">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                            <span>View full image</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Extended sample artwork data with more items
+        const allArtworks = [
+            // Original 12 artworks
+            {
+                id: 1, title: "Starry Night", artist: "Vincent van Gogh", genre: "Post-Impressionism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+                description: "A famous painting featuring a swirling night sky."
+            },
+            {
+                id: 2, title: "Mona Lisa", artist: "Leonardo da Vinci", genre: "Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+                description: "A portrait with a mysterious smile."
+            },
+            {
+                id: 3, title: "The Scream", artist: "Edvard Munch", genre: "Expressionism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",
+                description: "An iconic depiction of anxiety."
+            },
+            {
+                id: 4, title: "Water Lilies", artist: "Claude Monet", genre: "Impressionism",
+                image: "https://www.artic.edu/iiif/2/3c27b499-af56-f0d5-93b5-a7f2f1ad5813/full/843,/0/default.jpg",
+                description: "A serene pond scene."
+            },
+            {
+                id: 5, title: "The Night Watch", artist: "Rembrandt", genre: "Baroque",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Rembrandt_van_Rijn-De_Nachtwacht-1642.jpg/1280px-Rembrandt_van_Rijn-De_Nachtwacht-1642.jpg",
+                description: "A group portrait of a militia company."
+            },
+            {
+                id: 6, title: "Girl with a Pearl Earring", artist: "Johannes Vermeer", genre: "Baroque",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",
+                description: "A portrait of a girl with a pearl earring."
+            },
+            {
+                id: 7, title: "The Persistence of Memory", artist: "Salvador Dalí", genre: "Surrealism",
+                image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
+                description: "Famous for its melting clocks imagery."
+            },
+            {
+                id: 8, title: "Les Demoiselles d'Avignon", artist: "Pablo Picasso", genre: "Cubism",
+                image: "https://upload.wikimedia.org/wikipedia/en/4/4c/Les_Demoiselles_d%27Avignon.jpg",
+                description: "A radical departure from traditional composition and perspective."
+            },
+            {
+                id: 9, title: "The Birth of Venus", artist: "Sandro Botticelli", genre: "Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/2560px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg",
+                description: "Depicts the goddess Venus arriving at the shore after her birth."
+            },
+            {
+                id: 10, title: "The Kiss", artist: "Gustav Klimt", genre: "Symbolism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/800px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
+                description: "A couple embracing, wrapped in elaborate robes decorated in a style influenced by Art Nouveau."
+            },
+            {
+                id: 11, title: "The Garden of Earthly Delights", artist: "Hieronymus Bosch", genre: "Northern Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/The_Garden_of_earthly_delights.jpg/1280px-The_Garden_of_earthly_delights.jpg",
+                description: "A triptych depicting the Garden of Eden, Earth, and Hell."
+            },
+            {
+                id: 12, title: "Guernica", artist: "Pablo Picasso", genre: "Cubism",
+                image: "https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg",
+                description: "A response to the bombing of Guernica during the Spanish Civil War."
+            },
+
+            // Adding more artworks
+            {
+                id: 13, title: "The Last Supper", artist: "Leonardo da Vinci", genre: "Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg/1280px-The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg",
+                description: "Depicts Jesus's last meal with his disciples before his crucifixion."
+            },
+            {
+                id: 14, title: "The Creation of Adam", artist: "Michelangelo", genre: "Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1280px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg",
+                description: "Part of the Sistine Chapel ceiling, depicting God giving life to Adam."
+            },
+            {
+                id: 15, title: "The Great Wave off Kanagawa", artist: "Katsushika Hokusai", genre: "Ukiyo-e",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/1280px-Tsunami_by_hokusai_19th_century.jpg",
+                description: "A woodblock print showing a giant wave threatening boats off the coast of Kanagawa."
+            },
+            {
+                id: 16, title: "American Gothic", artist: "Grant Wood", genre: "Regionalism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/800px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg",
+                description: "Depicts a farmer standing beside his daughter in front of their house."
+            },
+            {
+                id: 17, title: "The Sleeping Gypsy", artist: "Henri Rousseau", genre: "Post-Impressionism",
+                image: "https://images.pexels.com/photos/3186574/pexels-photo-3186574.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                description: "A woman asleep in a barren landscape with a lion nearby."
+            },
+            {
+                id: 18, title: "Three Musicians", artist: "Pablo Picasso", genre: "Cubism",
+                image: "https://images.pexels.com/photos/111287/pexels-photo-111287.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                description: "A colorful depiction of musicians rendered in Picasso's synthetic cubist style."
+            },
+            {
+                id: 19, title: "Sunflowers", artist: "Vincent van Gogh", genre: "Post-Impressionism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vincent_Willem_van_Gogh_127.jpg/800px-Vincent_Willem_van_Gogh_127.jpg",
+                description: "One of several still life paintings featuring sunflowers in a vase."
+            },
+            {
+                id: 20, title: "The Arnolfini Portrait", artist: "Jan van Eyck", genre: "Northern Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg/800px-Van_Eyck_-_Arnolfini_Portrait.jpg",
+                description: "A full-length double portrait of a couple in their home."
+            },
+            {
+                id: 21, title: "Nighthawks", artist: "Edward Hopper", genre: "American Realism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Nighthawks_by_Edward_Hopper_1942.jpg/1920px-Nighthawks_by_Edward_Hopper_1942.jpg",
+                description: "Depicts people sitting in a downtown diner late at night."
+            },
+            {
+                id: 22, title: "The Son of Man", artist: "René Magritte", genre: "Surrealism",
+                image: "https://upload.wikimedia.org/wikipedia/en/e/e5/Magritte_TheSonOfMan.jpg",
+                description: "A self-portrait with the subject's face obscured by a floating green apple."
+            },
+            {
+                id: 23, title: "The Thinker", artist: "Auguste Rodin", genre: "Modern Sculpture",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Thinker%2C_Rodin.jpg/800px-The_Thinker%2C_Rodin.jpg",
+                description: "A bronze sculpture of a nude male figure in deep contemplation."
+            },
+            {
+                id: 24, title: "Campbell's Soup Cans", artist: "Andy Warhol", genre: "Pop Art",
+                image: "https://www.moma.org/media/W1siZiIsIjMxODI0MiJdLFsicCIsImNvbnZlcnQiLCItcXVhbGl0eSA5MCAtcmVzaXplIDIwMDB4MjAwMFx1MDAzZSJdXQ.jpg?sha=861649ba426bae28",
+                description: "A work consisting of 32 canvases, each depicting a different variety of Campbell's soup."
+            },
+            {
+                id: 25, title: "A Sunday Afternoon on the Island of La Grande Jatte", artist: "Georges Seurat", genre: "Pointillism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/1200px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg",
+                description: "A large-scale work depicting Parisians relaxing in a suburban park using tiny dots of color."
+            },
+            {
+                id: 26, title: "The Ambassadors", artist: "Hans Holbein the Younger", genre: "Northern Renaissance",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg/1024px-Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
+                description: "A double portrait with an anamorphic skull in the foreground."
+            },
+            {
+                id: 27, title: "Tiger in a Tropical Storm", artist: "Henri Rousseau", genre: "Post-Impressionism",
+                image: "https://images.pexels.com/photos/45910/goldfish-carassius-fish-golden-45910.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                description: "Also known as 'Surprised!', depicts a tiger in a jungle during a storm."
+            },
+            {
+                id: 28, title: "The Raft of the Medusa", artist: "Théodore Géricault", genre: "Romanticism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/1280px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg",
+                description: "A dramatic depiction of the aftermath of the wreck of the French naval frigate Méduse."
+            },
+            {
+                id: 29, title: "Liberty Leading the People", artist: "Eugène Delacroix", genre: "Romanticism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Eug%C3%A8ne_Delacroix_-_Le_28_Juillet._La_Libert%C3%A9_guidant_le_peuple.jpg/1920px-Eug%C3%A8ne_Delacroix_-_Le_28_Juillet._La_Libert%C3%A9_guidant_le_peuple.jpg",
+                description: "A painting commemorating the July Revolution of 1830 in France."
+            },
+            {
+                id: 30, title: "The Third of May 1808", artist: "Francisco Goya", genre: "Romanticism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/El_Tres_de_Mayo%2C_by_Francisco_de_Goya%2C_from_Prado_thin_black_margin.jpg/1280px-El_Tres_de_Mayo%2C_by_Francisco_de_Goya%2C_from_Prado_thin_black_margin.jpg",
+                description: "Depicts the execution of Spanish resistance fighters by French troops."
+            },
+            {
+                id: 31, title: "The Card Players", artist: "Paul Cézanne", genre: "Post-Impressionism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Les_Joueurs_de_cartes%2C_par_Paul_C%C3%A9zanne%2C_collection_Al-Thani%2C_Yorck.jpg/1280px-Les_Joueurs_de_cartes%2C_par_Paul_C%C3%A9zanne%2C_collection_Al-Thani%2C_Yorck.jpg",
+                description: "A series of oil paintings depicting French peasants playing cards."
+            },
+            {
+                id: 32, title: "Wanderer above the Sea of Fog", artist: "Caspar David Friedrich", genre: "Romanticism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/800px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg",
+                description: "A figure standing upon a rocky precipice overlooking a sea of fog."
+            },
+            {
+                id: 33, title: "No. 5, 1948", artist: "Jackson Pollock", genre: "Abstract Expressionism",
+                image: "https://upload.wikimedia.org/wikipedia/en/4/4a/No._5%2C_1948.jpg",
+                description: "A famous example of Pollock's drip painting technique."
+            },
+            {
+                id: 34, title: "Woman with a Parasol", artist: "Claude Monet", genre: "Impressionism",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg/800px-Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg",
+                description: "Depicts the artist's wife Camille and their son Jean in a field."
+            },
+            {
+                id: 35, title: "The Swing", artist: "Jean-Honoré Fragonard", genre: "Rococo",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Fragonard%2C_The_Swing.jpg/800px-Fragonard%2C_The_Swing.jpg",
+                description: "Shows a young woman on a swing, pushed by an elderly man, while her lover looks on from the bushes."
+            },
+            {
+                id: 36, title: "Composition with Red, Blue, and Yellow", artist: "Piet Mondrian", genre: "De Stijl",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Piet_Mondriaan%2C_1930_-_Mondrian_Composition_II_in_Red%2C_Blue%2C_and_Yellow.jpg/1024px-Piet_Mondriaan%2C_1930_-_Mondrian_Composition_II_in_Red%2C_Blue%2C_and_Yellow.jpg",
+                description: "A simplified, abstract painting using only primary colors and black lines."
+            }
+        ];
+
+        // DOM elements
+        const galleryGrid = document.getElementById('galleryGrid');
+        const searchInput = document.getElementById('searchInput');
+        const artModal = document.getElementById('artModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalInfo = document.getElementById('modalInfo');
+        const closeModal = document.getElementById('closeModal');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const searchSpinner = document.getElementById('searchSpinner');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+
+        // App state
+        let favorites = new Set();
+        let searchTimeout;
+        let currentPage = 1;
+        const itemsPerPage = 4;
+        let filteredArtworks = [...allArtworks];
+        let isSearching = false;
+        let showingFavorites = false; // Track whether we're showing favorites
+
+        // Load favorites from localStorage
+        function loadFavorites() {
+            const storedFavorites = localStorage.getItem('artGalleryFavorites');
+            if (storedFavorites) {
+                favorites = new Set(JSON.parse(storedFavorites));
+            }
+        }
+
+        // Save favorites to localStorage
+        function saveFavorites() {
+            localStorage.setItem('artGalleryFavorites', JSON.stringify([...favorites]));
+        }
+
+        // Toggle favorite status
+        function toggleFavorite(id, btn) {
+            const wasAlreadyFavorite = favorites.has(id);
+
+            if (wasAlreadyFavorite) {
+                favorites.delete(id);
+                btn.textContent = '♡';
+                btn.classList.remove('text-art-primary');
+                btn.classList.add('text-gray-500', 'dark:text-gray-300');
+                btn.setAttribute('aria-label', 'Add to favorites');
+            } else {
+                favorites.add(id);
+                btn.textContent = '♥';
+                btn.classList.remove('text-gray-500', 'dark:text-gray-300');
+                btn.classList.add('text-art-primary', 'animate-heartbeat');
+                btn.setAttribute('aria-label', 'Remove from favorites');
+
+                // Remove the animation class after it completes
+                setTimeout(() => {
+                    btn.classList.remove('animate-heartbeat');
+                }, 1000);
+            }
+
+            saveFavorites();
+        }
+
+        // Debounced search implementation
+        function debounceSearch(value) {
+            searchSpinner.classList.remove('hidden');
+            isSearching = true;
+
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = value.toLowerCase();
+
+                filteredArtworks = allArtworks.filter(art =>
+                    art.title.toLowerCase().includes(searchTerm) ||
+                    art.artist.toLowerCase().includes(searchTerm) ||
+                    art.genre.toLowerCase().includes(searchTerm)
+                );
+
+                currentPage = 1;
+                renderGallery();
+                searchSpinner.classList.add('hidden');
+                isSearching = false;
+            }, 500);
+        }
+
+        // Toggle between showing all artworks or only favorites
+        function toggleFavoritesView() {
+            showingFavorites = !showingFavorites;
+            
+            // Update button appearance
+            const favBtn = document.getElementById('favoritesBtn');
+            if (showingFavorites) {
+                favBtn.classList.add('bg-art-primary', 'text-white');
+                favBtn.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'border-gray-200', 'dark:border-gray-700');
+            } else {
+                favBtn.classList.remove('bg-art-primary', 'text-white');
+                favBtn.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'border-gray-200', 'dark:border-gray-700');
+            }
+            
+            // Filter artworks based on view mode
+            if (showingFavorites) {
+                filteredArtworks = allArtworks.filter(art => favorites.has(art.id));
+            } else {
+                // If there's a search term, respect it when returning to all artworks
+                const searchTerm = searchInput.value.toLowerCase();
+                if (searchTerm) {
+                    filteredArtworks = allArtworks.filter(art => 
+                        art.title.toLowerCase().includes(searchTerm) ||
+                        art.artist.toLowerCase().includes(searchTerm) ||
+                        art.genre.toLowerCase().includes(searchTerm)
+                    );
+                } else {
+                    filteredArtworks = [...allArtworks];
+                }
+            }
+            
+            // Reset pagination and render
+            currentPage = 1;
+            renderGallery();
+        }
+
+        // Render gallery with pagination support
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+
+            // Show no results message if needed
+            if (filteredArtworks.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+                loadMoreBtn.classList.add('hidden');
+                return;
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+
+            const startIndex = 0;
+            const endIndex = currentPage * itemsPerPage;
+            const currentArtworks = filteredArtworks.slice(startIndex, endIndex);
+
+            // Update load more button visibility
+            if (endIndex < filteredArtworks.length) {
+                loadMoreBtn.classList.remove('hidden');
+            } else {
+                loadMoreBtn.classList.add('hidden');
+            }
+
+            // Create and append artwork items
+            currentArtworks.forEach((art, index) => {
+                const div = document.createElement('div');
+                div.className = 'group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transform transition-transform duration-300 hover:scale-[1.02] cursor-pointer touch-action-manipulation will-change-transform opacity-0 art-frame';
+                div.style.animationDelay = `${index * 100}ms`;
+                div.classList.add('animate-fadeIn');
+
+                div.innerHTML = `
+                    <div class="aspect-w-4 aspect-h-3 hover-float">
+                        <img src="${art.image}" alt="${art.title}" 
+                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100">
+                            <div class="text-white font-medium text-center w-full">
+                                <div class="text-lg font-serif">${art.title}</div>
+                                <div class="text-sm opacity-90 font-light artist-name">${art.artist}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 text-center">
+                        <div class="card-title text-sm font-medium dark:text-gray-200">${art.title}</div>
+                        <div class="artist-name text-xs text-gray-600 dark:text-gray-400">${art.genre}</div>
+                    </div>
+                    <button class="favorite-btn absolute top-3 right-3 bg-white dark:bg-gray-700 bg-opacity-80 p-1.5 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 dark:focus:ring-blue-600 transition-colors duration-300 ${favorites.has(art.id) ? 'text-art-primary' : 'text-gray-500 dark:text-gray-300'}" 
+                            data-id="${art.id}"
+                            aria-label="${favorites.has(art.id) ? 'Remove from favorites' : 'Add to favorites'}">${favorites.has(art.id) ? '♥' : '♡'}</button>
+                `;
+
+                div.addEventListener('click', (e) => {
+                    if (!e.target.closest('.favorite-btn')) {
+                        showModal(art);
+                    }
+                });
+
+                galleryGrid.appendChild(div);
+            });
+
+            // Add heart button functionality with animation
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    toggleFavorite(id, btn);
+                });
+            });
+        }
+
+        // Load more items
+        function loadMore() {
+            loadMoreBtn.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+
+            // Simulate network delay for more realistic loading experience
+            setTimeout(() => {
+                const previousHeight = galleryGrid.scrollHeight;
+                currentPage++;
+
+                // Get the start and end indices for the new items
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = currentPage * itemsPerPage;
+                const newArtworks = filteredArtworks.slice(startIndex, endIndex);
+
+                // Remember scroll position before adding new content
+                const scrollPosition = window.scrollY;
+
+                // Create elements for new artworks but don't append them yet
+                const newElements = [];
+
+                newArtworks.forEach((art) => {
+                    const div = document.createElement('div');
+                    div.className = 'group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transform transition-transform duration-300 hover:scale-[1.02] cursor-pointer touch-action-manipulation will-change-transform opacity-0 art-frame';
+                    div.classList.add('animate-fadeIn');
+
+                    div.innerHTML = `
+                        <div class="aspect-w-4 aspect-h-3 hover-float">
+                            <img src="${art.image}" alt="${art.title}" 
+                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                loading="lazy">
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100">
+                                <div class="text-white font-medium text-center w-full">
+                                    <div class="text-lg font-serif">${art.title}</div>
+                                    <div class="text-sm opacity-90 font-light artist-name">${art.artist}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 text-center">
+                            <div class="card-title text-sm font-medium dark:text-gray-200">${art.title}</div>
+                            <div class="artist-name text-xs text-gray-600 dark:text-gray-400">${art.genre}</div>
+                        </div>
+                        <button class="favorite-btn absolute top-3 right-3 bg-white dark:bg-gray-700 bg-opacity-80 p-1.5 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 dark:focus:ring-blue-600 transition-colors duration-300 ${favorites.has(art.id) ? 'text-art-primary' : 'text-gray-500 dark:text-gray-300'}" 
+                                data-id="${art.id}"
+                                aria-label="${favorites.has(art.id) ? 'Remove from favorites' : 'Add to favorites'}">${favorites.has(art.id) ? '♥' : '♡'}</button>
+                    `;
+
+                    div.addEventListener('click', (e) => {
+                        if (!e.target.closest('.favorite-btn')) {
+                            showModal(art);
+                        }
+                    });
+
+                    newElements.push(div);
+                });
+
+                // Add new elements one by one with a slight delay between each
+                newElements.forEach((element, index) => {
+                    setTimeout(() => {
+                        galleryGrid.appendChild(element);
+
+                        // Apply staggered animation delay
+                        element.style.animationDelay = `${index * 100}ms`;
+
+                        // Add heart button functionality
+                        const favBtn = element.querySelector('.favorite-btn');
+                        if (favBtn) {
+                            favBtn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const id = parseInt(favBtn.dataset.id);
+                                toggleFavorite(id, favBtn);
+                            });
+                        }
+                    }, index * 50);
+                });
+
+                // Update load more button visibility
+                setTimeout(() => {
+                    loadingIndicator.classList.add('hidden');
+                    if (endIndex < filteredArtworks.length) {
+                        loadMoreBtn.classList.remove('hidden');
+                    }
+
+                    // Add a subtle scroll animation to show some of the new content
+                    if (newElements.length > 0) {
+                        const scrollToPosition = scrollPosition + 100; // Scroll down a bit to reveal new content
+                        window.scrollTo({
+                            top: scrollToPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, newElements.length * 50 + 100);
+            }, 600);
+        }
+
+        // Show modal with artwork details
+        function showModal(art) {
+            modalImage.src = art.image;
+            modalImage.alt = art.title;
+            modalImage.style.opacity = '0';
+
+            const isFavorite = favorites.has(art.id);
+            
+            // Enhanced modal content with more structured information
+            modalInfo.innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <h2 id="modalTitle" class="font-serif text-3xl md:text-4xl font-bold mb-1 dark:text-gray-100 relative inline-block">
+                            ${art.title}
+                            <span class="absolute -top-4 -right-8 text-xs font-sans bg-art-primary text-white px-2 py-0.5 rounded-full opacity-80">${art.genre}</span>
+                        </h2>
+                        <p class="text-lg italic text-gray-600 dark:text-gray-400">${art.artist}</p>
+                    </div>
+                    
+                    <div class="w-1/6 h-0.5 bg-gradient-to-r from-art-primary to-transparent"></div>
+                    
+                    <div class="prose prose-lg dark:prose-invert max-w-none">
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">${art.description}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-3">
+                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Artwork Details</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Year</div>
+                                <div class="text-gray-800 dark:text-gray-200">${art.year || "Unknown"}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Medium</div>
+                                <div class="text-gray-800 dark:text-gray-200">${art.medium || "Oil on canvas"}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Dimensions</div>
+                                <div class="text-gray-800 dark:text-gray-200">${art.dimensions || "Not specified"}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Location</div>
+                                <div class="text-gray-800 dark:text-gray-200">${art.location || "Private collection"}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Historical Context</h3>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                            ${art.historicalContext || `This ${art.genre} masterpiece by ${art.artist} exemplifies the artistic movements of its time. The work showcases the characteristic style and techniques that made ${art.artist} renowned in art history.`}
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3 pt-4">
+                        <button class="favorite-btn flex items-center gap-2 px-4 py-2 rounded-full ${isFavorite ? 'bg-art-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} hover:shadow-md transition-all duration-300 font-medium" data-modal-id="${art.id}">
+                            <span class="text-lg">${isFavorite ? '♥' : '♡'}</span>
+                            <span>${isFavorite ? 'Remove from favorites' : 'Add to favorites'}</span>
+                        </button>
+                        
+                        <button class="share-btn flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:shadow-md transition-all duration-300 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                            <span>Share</span>
+                        </button>
+                        
+                        <a href="${art.image}" target="_blank" class="view-full-btn flex items-center gap-2 px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:shadow-md transition-all duration-300 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            <span>View full image</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            artModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+
+            // Animate modal entrance with sequential animations
+            setTimeout(() => {
+                artModal.classList.add('opacity-100');
+                const modalContent = artModal.querySelector('.transform');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+                
+                // Fade in the image after modal appears
+                setTimeout(() => {
+                    modalImage.style.opacity = '1';
+                }, 200);
+            }, 10);
+
+            // Add favorite button functionality in modal with improved animation
+            setTimeout(() => {
+                const modalFavBtn = document.querySelector('.favorite-btn[data-modal-id]');
+                if (modalFavBtn) {
+                    modalFavBtn.addEventListener('click', () => {
+                        const id = parseInt(modalFavBtn.dataset.modalId);
+                        const wasAlreadyFavorite = favorites.has(id);
+
+                        toggleFavorite(id, modalFavBtn.querySelector('span:first-child'));
+
+                        // Update the button appearance with a smooth transition
+                        if (wasAlreadyFavorite) {
+                            modalFavBtn.classList.remove('bg-art-primary', 'text-white');
+                            modalFavBtn.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                            modalFavBtn.querySelector('span:last-child').textContent = 'Add to favorites';
+                        } else {
+                            modalFavBtn.classList.add('bg-art-primary', 'text-white');
+                            modalFavBtn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                            modalFavBtn.querySelector('span:last-child').textContent = 'Remove from favorites';
+                            modalFavBtn.classList.add('animate-pulse');
+                            setTimeout(() => modalFavBtn.classList.remove('animate-pulse'), 1000);
+                        }
+
+                        // Update all matching gallery buttons
+                        document.querySelectorAll(`.favorite-btn[data-id="${id}"]`).forEach(btn => {
+                            if (favorites.has(id)) {
+                                btn.textContent = '♥';
+                                btn.classList.remove('text-gray-500', 'dark:text-gray-300');
+                                btn.classList.add('text-art-primary');
+                            } else {
+                                btn.textContent = '♡';
+                                btn.classList.remove('text-art-primary');
+                                btn.classList.add('text-gray-500', 'dark:text-gray-300');
+                            }
+                        });
+                    });
+                }
+
+                // Add share button functionality
+                const shareBtn = document.querySelector('.share-btn');
+                if (shareBtn) {
+                    shareBtn.addEventListener('click', () => {
+                        // Add share functionality if Web Share API is available
+                        if (navigator.share) {
+                            navigator.share({
+                                title: art.title,
+                                text: `Check out "${art.title}" by ${art.artist}`,
+                                url: window.location.href
+                            })
+                            .catch(error => console.log('Error sharing:', error));
+                        } else {
+                            // Fallback for browsers that don't support the Web Share API
+                            const tempInput = document.createElement('input');
+                            document.body.appendChild(tempInput);
+                            tempInput.value = window.location.href;
+                            tempInput.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(tempInput);
+                            
+                            // Show feedback
+                            const originalText = shareBtn.innerHTML;
+                            shareBtn.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Link copied!</span>
+                            `;
+                            setTimeout(() => {
+                                shareBtn.innerHTML = originalText;
+                            }, 2000);
+                        }
+                    });
+                }
+            }, 10);
+
+            // Set focus to close button for keyboard accessibility
+            setTimeout(() => {
+                closeModal.focus();
+            }, 300);
+        }
+
+        // Close modal with improved animation
+        closeModal.addEventListener('click', closeModalHandler);
+
+        function closeModalHandler() {
+            // Fade out the image first
+            modalImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Then fade out the modal
+                artModal.classList.remove('opacity-100');
+                const modalContent = artModal.querySelector('.transform');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                
+                setTimeout(() => {
+                    artModal.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }, 300);
+            }, 200);
+        }
+
+        // Search input handler with debounce
+        searchInput.addEventListener('input', (e) => {
+            // If we're in favorites view, switch back to all artworks
+            if (showingFavorites) {
+                showingFavorites = false;
+                const favBtn = document.getElementById('favoritesBtn');
+                favBtn.classList.remove('bg-art-primary', 'text-white');
+                favBtn.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'border-gray-200', 'dark:border-gray-700');
+            }
+            debounceSearch(e.target.value);
+        });
+
+        // Click outside modal to close
+        artModal.addEventListener('click', (e) => {
+            if (e.target === artModal || e.target.closest('.fixed.inset-0') === e.target) {
+                closeModalHandler();
+            }
+        });
+
+        // Keyboard accessibility for modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !artModal.classList.contains('hidden')) {
+                closeModalHandler();
+            }
+        });
+
+        // Dark mode toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+            darkModeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        });
+
+        // Load More button click handler
+        loadMoreBtn.addEventListener('click', loadMore);
+
+        // Implement infinite scroll
+        const infiniteScrollObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !isSearching && endIndex < filteredArtworks.length) {
+                loadMore();
+            }
+        }, { rootMargin: '200px' });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved favorites
+            loadFavorites();
+            
+            // Add favorites button handler
+            document.getElementById('favoritesBtn').addEventListener('click', toggleFavoritesView);
+            
+            // Check for dark mode preference
+            const darkModePref = localStorage.getItem('darkMode');
+            if (darkModePref === 'dark') {
+                document.documentElement.classList.add('dark');
+                darkModeToggle.setAttribute('aria-label', 'Switch to light mode');
+            } else if (darkModePref === 'light') {
+                document.documentElement.classList.remove('dark');
+                darkModeToggle.setAttribute('aria-label', 'Switch to dark mode');
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                // If no preference is saved but system is set to dark, use dark mode
+                document.documentElement.classList.add('dark');
+                darkModeToggle.setAttribute('aria-label', 'Switch to light mode');
+            }
+
+            // Initialize aspect ratio polyfill
+            if (!('aspectRatio' in document.documentElement.style)) {
+                const elements = document.querySelectorAll('.aspect-w-4.aspect-h-3');
+                elements.forEach(el => {
+                    const ratio = 3 / 4;
+                    el.style.position = 'relative';
+                    el.style.paddingBottom = `${ratio * 100}%`;
+                    const child = el.firstElementChild;
+                    if (child) {
+                        child.style.position = 'absolute';
+                        child.style.top = '0';
+                        child.style.left = '0';
+                        child.style.width = '100%';
+                        child.style.height = '100%';
+                    }
+                });
+            }
+
+            // Set up infinite scroll observer
+            infiniteScrollObserver.observe(document.getElementById('loadMoreBtn'));
+
+            // Initial render
+            renderGallery();
+        });
+    </script>
+</body>
+
+</html>

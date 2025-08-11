@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elite Article Navigator</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Add Tailwind CSS CDN only for utility classes without changing main styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom checkbox class to fix alignment */
+      .filter-checkbox {
+        margin-right: 12px;
+        width: 18px;
+        height: 18px;
+        position: relative;
+        top: 2px;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 0;
+        margin-left: 2px;
+      }
+
+      :root {
+        --primary-gradient: linear-gradient(135deg, #6246ea 0%, #9d84ff 100%);
+        --secondary-gradient: linear-gradient(135deg, #2b2c5a 0%, #4a4b8c 100%);
+        --accent-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%);
+        --surface-gradient: linear-gradient(135deg, #ffffff 0%, #f9fafc 100%);
+        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05),
+          0 1px 4px rgba(0, 0, 0, 0.03);
+        --button-shadow: 0 4px 12px rgba(98, 70, 234, 0.3);
+        --transition-fast: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+        --transition-normal: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+        --transition-slow: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 24px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #f9fafc;
+        color: #1a1c28;
+        padding: 40px 20px;
+        line-height: 1.7;
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+      }
+
+      @media (min-width: 768px) {
+        body {
+          padding: 60px;
+        }
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+      }
+
+      .page-header::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary-gradient);
+        border-radius: 3px;
+      }
+
+      .page-title {
+        font-family: "Playfair Display", serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
+      }
+
+      .page-subtitle {
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: #5a607f;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .container {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      @media (min-width: 992px) {
+        .container {
+          grid-template-columns: 340px 1fr;
+        }
+      }
+
+      .search-bar {
+        grid-column: 1 / -1;
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 18px 24px 18px 55px;
+        font-size: 16px;
+        font-family: "Inter", sans-serif;
+        border: 1px solid #e2e4ea;
+        border-radius: var(--border-radius-lg);
+        background: white;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-normal);
+      }
+
+      .search-bar::before {
+        content: "\f002";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        left: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9aa2c1;
+        transition: var(--transition-normal);
+        pointer-events: none;
+      }
+
+      .search-bar input:focus {
+        outline: none;
+        border-color: #6246ea;
+        box-shadow: 0 8px 25px rgba(98, 70, 234, 0.15);
+      }
+
+      .search-bar input:focus + .search-bar::before {
+        color: #6246ea;
+      }
+
+      .filters {
+        background: white;
+        padding: 25px;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--card-shadow);
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+        transition: var(--transition-normal);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        z-index: 10;
+      }
+
+      .filters:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07),
+          0 1px 4px rgba(0, 0, 0, 0.03);
+      }
+
+      .filter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f2f7;
+      }
+
+      .filter-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1c28;
+      }
+
+      .filter-reset {
+        font-size: 13px;
+        color: #6246ea;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: var(--transition-fast);
+      }
+
+      .filter-reset:hover {
+        background: #f5f4ff;
+      }
+
+      .filter-section {
+        margin-bottom: 25px;
+      }
+
+      .filter-section h3 {
+        cursor: pointer;
+        padding: 12px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6246ea;
+        background: #f5f4ff;
+        border-radius: var(--border-radius-sm);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.3s ease;
+      }
+
+      .filter-section h3:hover {
+        background: #ebe8ff;
+      }
+
+      .filter-section h3 span {
+        transition: transform 0.3s ease;
+      }
+
+      .filter-section h3 span.active {
+        transform: rotate(180deg);
+      }
+
+      .filter-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+        opacity: 0;
+      }
+
+      .filter-content.active {
+        max-height: 350px;
+        opacity: 1;
+        padding: 20px 0 10px;
+      }
+
+      .filter-option {
+        margin: 12px 0;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        color: #1a1c28;
+        font-weight: 500;
+        transition: var(--transition-fast);
+      }
+
+      .filter-option:hover {
+        color: #6246ea;
+      }
+
+      .filter-option input {
+        margin-right: 12px;
+        accent-color: #6246ea;
+        transform: scale(1.1);
+        transition: var(--transition-fast);
+      }
+
+      .articles {
+        background: white;
+        padding: 30px;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-normal);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .articles:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07),
+          0 1px 4px rgba(0, 0, 0, 0.03);
+      }
+
+      .articles-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f2f7;
+      }
+
+      .articles-count {
+        font-size: 14px;
+        color: #5a607f;
+        font-weight: 500;
+      }
+
+      .articles-count span {
+        font-weight: 600;
+        color: #1a1c28;
+      }
+
+      .view-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .view-toggle button {
+        background: none;
+        border: none;
+        font-size: 16px;
+        color: #9aa2c1;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 6px;
+        transition: var(--transition-fast);
+      }
+
+      .view-toggle button:hover,
+      .view-toggle button.active {
+        color: #6246ea;
+        background: #f5f4ff;
+      }
+
+      .article-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .article-list {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 30px;
+      }
+
+      .article-item {
+        background: white;
+        padding: 20px;
+        border-radius: var(--border-radius-md);
+        transition: var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        margin-bottom: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .article-item:hover {
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+        transform: translateY(-5px);
+      }
+
+      .article-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary-gradient);
+        opacity: 0;
+        transition: var(--transition-normal);
+      }
+
+      .article-item:hover::before {
+        opacity: 1;
+      }
+
+      .article-content {
+        flex: 1;
+      }
+
+      .article-category {
+        display: inline-block;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: white;
+        background: var(--primary-gradient);
+        border-radius: 30px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .article-category.tech {
+        background: var(--primary-gradient);
+      }
+      .article-category.science {
+        background: linear-gradient(135deg, #28c76f 0%, #81fbb8 100%);
+      }
+      .article-category.news {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+      }
+      .article-category.business {
+        background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+      }
+      .article-category.marketing {
+        background: linear-gradient(135deg, #f46b45 0%, #eea849 100%);
+      }
+      .article-category.finance {
+        background: linear-gradient(135deg, #396afc 0%, #2948ff 100%);
+      }
+      .article-category.health {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .article-category.leadership {
+        background: linear-gradient(135deg, #834d9b 0%, #d04ed6 100%);
+      }
+      .article-category.workplace {
+        background: linear-gradient(135deg, #4776e6 0%, #8e54e9 100%);
+      }
+
+      .article-title {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: #1a1c28;
+        margin-bottom: 10px;
+        line-height: 1.4;
+        transition: var(--transition-fast);
+      }
+
+      .article-item:hover .article-title {
+        color: #6246ea;
+      }
+
+      .article-summary {
+        font-size: 14px;
+        color: #5a607f;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .article-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f2f7;
+      }
+
+      .article-date {
+        font-size: 14px;
+        color: #9aa2c1;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .article-date i {
+        font-size: 12px;
+      }
+
+      .article-popularity {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .article-popularity.high {
+        color: #28c76f;
+      }
+      .article-popularity.medium {
+        color: #ff9f43;
+      }
+      .article-popularity.low {
+        color: #ea5455;
+      }
+
+      .article-read-more {
+        margin-top: 10px;
+        text-align: right;
+        font-weight: 600;
+        color: #6246ea;
+        font-size: 14px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: var(--transition-normal);
+      }
+
+      .article-item:hover .article-read-more {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .article-read-more i {
+        font-size: 12px;
+        transition: transform 0.3s ease;
+        display: inline-block;
+        margin-left: 4px;
+      }
+
+      .article-item:hover .article-read-more i {
+        transform: translateX(3px);
+      }
+
+      .pagination {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .pagination button {
+        padding: 12px 18px;
+        border: 1px solid #e2e4ea;
+        background: white;
+        color: #5a607f;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: var(--border-radius-md);
+        cursor: pointer;
+        transition: var(--transition-normal);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pagination button:hover:not(.active):not(:disabled) {
+        background: #6246ea;
+        color: white;
+        border-color: #6246ea;
+        box-shadow: var(--button-shadow);
+        transform: translateY(-3px);
+      }
+
+      .pagination button.active {
+        background: var(--primary-gradient);
+        color: white;
+        border-color: #6246ea;
+        box-shadow: var(--button-shadow);
+      }
+
+      .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .pagination button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(98, 70, 234, 0.3) 0%, rgba(98, 70, 234, 0) 70%);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+
+      .pagination button:active::after {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        transition: 0s;
+      }
+
+      .newsletter {
+        grid-column: 1 / -1;
+        background: var(--secondary-gradient);
+        padding: 40px;
+        border-radius: var(--border-radius-xl);
+        color: white;
+        margin-top: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .newsletter::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+      }
+
+      .newsletter::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        transform: translate(-30%, 30%);
+      }
+
+      .newsletter-content {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+      }
+
+      .newsletter-title {
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        margin-bottom: 15px;
+      }
+
+      .newsletter-description {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-bottom: 25px;
+        line-height: 1.6;
+      }
+
+      .newsletter-form {
+        display: flex;
+        gap: 15px;
+      }
+
+      .newsletter-input {
+        flex: 1;
+        padding: 15px 20px;
+        border-radius: var(--border-radius-md);
+        border: none;
+        font-size: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: var(--transition-normal);
+      }
+
+      .newsletter-input:focus {
+        outline: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .newsletter-button {
+        background: var(--accent-gradient);
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+        padding: 0 25px;
+        border: none;
+        border-radius: var(--border-radius-md);
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        transition: var(--transition-normal);
+      }
+
+      .newsletter-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+      }
+
+      .footer {
+        grid-column: 1 / -1;
+        margin-top: 60px;
+        padding-top: 30px;
+        border-top: 1px solid #e2e4ea;
+        text-align: center;
+        color: #9aa2c1;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer a {
+        color: #6246ea;
+        text-decoration: none;
+        transition: var(--transition-fast);
+        position: relative;
+      }
+
+      .footer a:hover {
+        color: #4a35c4;
+      }
+
+      .footer a::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: currentColor;
+        transition: width 0.3s ease;
+      }
+
+      .footer a:hover::after {
+        width: 100%;
+      }
+
+      /* Animate content when it loads */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-up {
+        animation: fadeUp 0.5s ease forwards;
+      }
+
+      .stagger-item {
+        opacity: 0;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f9fafc;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #d4d7e3;
+        border-radius: 10px;
+        border: 3px solid #f9fafc;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #b0b5c4;
+      }
+
+      /* Enhanced loader animation */
+      .loader {
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.8) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        background-size: 200% 100%;
+        animation: loadingShimmer 1.5s infinite;
+        will-change: opacity;
+        transition: opacity 0.25s ease;
+      }
+
+      @keyframes loadingShimmer {
+        0% {
+          background-position: -100% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .loader-dot {
+        width: 12px;
+        height: 12px;
+        margin: 0 6px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        animation: loaderDot 1.5s infinite ease-in-out;
+        box-shadow: 0 3px 10px rgba(98, 70, 234, 0.2);
+      }
+
+      .loader-dot:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .loader-dot:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .loader-dot:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes loaderDot {
+        0%,
+        100% {
+          transform: scale(0.4);
+          opacity: 0.4;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* No results styling */
+      .no-results {
+        text-align: center;
+        padding: 60px 0;
+        opacity: 0;
+        animation: fadeUp 0.5s ease forwards 0.2s;
+      }
+
+      .no-results-icon {
+        font-size: 48px;
+        color: #e2e4ea;
+        margin-bottom: 20px;
+      }
+
+      .no-results-title {
+        margin-bottom: 10px;
+        color: #5a607f;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .no-results-message {
+        color: #9aa2c1;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+
+      /* Page transition animations */
+      @keyframes fadeUpIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes pageTransitionIn {
+        0% {
+          opacity: 0;
+          filter: blur(5px);
+          transform: translateY(15px) scale(0.98);
+        }
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes rippleEffect {
+        0% {
+          transform: scale(0);
+          opacity: 0.6;
+        }
+        100% {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      /* Page transition overlay with ripple effect */
+      .page-transition-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-gradient);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        pointer-events: none;
+      }
+
+      .page-transition-overlay.active {
+        opacity: 0.12;
+      }
+
+      .page-transition-overlay::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+
+      .page-transition-overlay.active::after {
+        animation: rippleEffect 0.8s ease-out forwards;
+      }
+
+      .article-item.animate-fade-up {
+        animation: pageTransitionIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+
+      .page-transition {
+        animation: fadeInScale 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+
+      .shimmer-effect {
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+      }
+
+      /* Page transition overlay */
+      .page-transition-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        background: var(--primary-gradient);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+      }
+
+      .page-transition-overlay.active {
+        height: 100%;
+        opacity: 0.15;
+      }
+
+      /* Production-ready page transition animations */
+      @keyframes pageTransitionInPro {
+        0% {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pageTransitionOutPro {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+      }
+
+      /* Material design inspired ripple animation */
+      @keyframes rippleAnimationPro {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0.4;
+        }
+        80% {
+          opacity: 0;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(2.5);
+          opacity: 0;
+        }
+      }
+
+      .article-wrapper {
+        position: relative;
+        min-height: 400px;
+      }
+
+      .articles-container {
+        will-change: opacity, transform;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .article-item.page-transition-item {
+        animation: pageTransitionInPro 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        opacity: 0;
+      }
+
+      .article-item.page-transition-item:nth-child(1) { animation-delay: 0.05s; }
+      .article-item.page-transition-item:nth-child(2) { animation-delay: 0.1s; }
+      .article-item.page-transition-item:nth-child(3) { animation-delay: 0.15s; }
+      .article-item.page-transition-item:nth-child(4) { animation-delay: 0.2s; }
+      .article-item.page-transition-item:nth-child(5) { animation-delay: 0.25s; }
+      .article-item.page-transition-item:nth-child(6) { animation-delay: 0.3s; }
+
+      /* Professional overlay for page transitions */
+      .page-transition-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(98, 70, 234, 0.03);
+        z-index: 9990;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .page-transition-overlay.active {
+        opacity: 1;
+      }
+
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(98, 70, 234, 0.12);
+        width: 150px;
+        height: 150px;
+        transform: translate(-50%, -50%) scale(0);
+        animation: none;
+        pointer-events: none;
+        z-index: 9991;
+      }
+
+      .ripple.animate {
+        animation: rippleAnimationPro 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      /* Loading indicator improvements */
+      .loader {
+        will-change: opacity;
+        transition: opacity 0.25s ease;
+      }
+
+      /* Pagination button feedback */
+      .pagination button {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pagination button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(98, 70, 234, 0.3) 0%, rgba(98, 70, 234, 0) 70%);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+
+      .pagination button:active::after {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        transition: 0s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
+    <header class="page-header animate-fade-up">
+      <h1 class="page-title">Elite Article Navigator</h1>
+      <p class="page-subtitle">
+        Discover curated insights from industry experts across technology,
+        business, finance, and more.
+      </p>
+    </header>
+
+    <div class="container">
+      <div class="search-bar animate-fade-up" style="animation-delay: 0.1s">
+        <input type="text" id="searchInput" placeholder="Search articles..." />
+      </div>
+
+      <div class="filters animate-fade-up" style="animation-delay: 0.2s">
+        <div class="filter-header">
+          <div class="filter-title">Filters</div>
+          <button class="filter-reset" id="resetFilters">Reset All</button>
+        </div>
+
+        <div class="filter-section">
+          <h3>Date <span>▼</span></h3>
+          <div class="filter-content">
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="date"
+                value="all"
+                checked
+              />
+              All Time</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="date"
+                value="week"
+              />
+              Last 7 Days</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="date"
+                value="month"
+              />
+              Last 30 Days</label
+            >
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h3>Category <span>▼</span></h3>
+          <div class="filter-content">
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="tech"
+              />
+              Technology</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="science"
+              />
+              Science</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="news"
+              />
+              News</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="business"
+              />
+              Business</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="finance"
+              />
+              Finance</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="marketing"
+              />
+              Marketing</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="health"
+              />
+              Healthcare</label
+            >
+            <label class="filter-option"
+              ><input
+                type="checkbox"
+                class="filter-checkbox"
+                name="category"
+                value="leadership"
+              />
+              Leadership</label
+            >
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h3>Popularity <span>▼</span></h3>
+          <div class="filter-content">
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="popularity"
+                value="all"
+                checked
+              />
+              All</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="popularity"
+                value="trending"
+              />
+              Trending</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="popularity"
+                value="most-read"
+              />
+              Most Read</label
+            >
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h3>Sort By <span>▼</span></h3>
+          <div class="filter-content">
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="sort"
+                value="date-desc"
+                checked
+              />
+              Date (Newest)</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="sort"
+                value="date-asc"
+              />
+              Date (Oldest)</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="sort"
+                value="title-asc"
+              />
+              Title (A-Z)</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="sort"
+                value="title-desc"
+              />
+              Title (Z-A)</label
+            >
+            <label class="filter-option"
+              ><input
+                type="radio"
+                class="filter-checkbox"
+                name="sort"
+                value="popularity-desc"
+              />
+              Popularity</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="articles animate-fade-up" style="animation-delay: 0.3s">
+        <div class="articles-header">
+          <div class="articles-count">
+            Showing <span id="articleCount">0</span> out of
+            <span id="totalArticleCount">0</span> articles
+          </div>
+          <div class="view-toggle">
+            <button id="gridView" class="active">
+              <i class="fas fa-th-large"></i>
+            </button>
+            <button id="listView"><i class="fas fa-list"></i></button>
+          </div>
+        </div>
+
+        <div id="articleContainer" class="article-grid"></div>
+        <div id="paginationContainer"></div>
+      </div>
+
+      <div class="newsletter animate-fade-up" style="animation-delay: 0.4s">
+        <div class="newsletter-content">
+          <h3 class="newsletter-title">Subscribe to our Newsletter</h3>
+          <p class="newsletter-description">
+            Get the latest articles and insights delivered straight to your
+            inbox, weekly.
+          </p>
+          <form class="newsletter-form">
+            <input
+              type="email"
+              class="newsletter-input"
+              placeholder="Enter your email address"
+              required
+            />
+            <button type="submit" class="newsletter-button">Subscribe</button>
+          </form>
+        </div>
+      </div>
+
+      <footer class="footer animate-fade-up" style="animation-delay: 0.5s">
+        <div class="footer-links">
+          <a href="#">About Us</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Advertise</a>
+          <a href="#">Careers</a>
+        </div>
+        <p>&copy; 2025 Elite Article Navigator. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <script>
+      const articles = [
+        {
+          id: 1,
+          title: "AI Revolution Unveiled",
+          summary:
+            "Exploring the latest advancements in artificial intelligence and their profound impact on modern technology.",
+          date: "2025-04-10",
+          category: "tech",
+          popularity: 85,
+        },
+        {
+          id: 2,
+          title: "Quantum Breakthrough",
+          summary:
+            "Scientists achieve a significant milestone in quantum computing research.",
+          date: "2025-04-08",
+          category: "science",
+          popularity: 92,
+        },
+        {
+          id: 3,
+          title: "Global Tech Summit",
+          summary:
+            "Key highlights and innovations from the annual technology conference.",
+          date: "2025-04-05",
+          category: "tech",
+          popularity: 78,
+        },
+        {
+          id: 4,
+          title: "Climate Research Update",
+          summary:
+            "New findings reveal critical patterns in climate change data.",
+          date: "2025-04-01",
+          category: "science",
+          popularity: 65,
+        },
+        {
+          id: 5,
+          title: "Breaking News: Tech Merger",
+          summary: "Two tech giants announce a groundbreaking merger deal.",
+          date: "2025-04-12",
+          category: "news",
+          popularity: 95,
+        },
+        {
+          id: 6,
+          title: "The Future of E-Commerce",
+          summary:
+            "Innovative strategies and technologies reshaping the online shopping experience.",
+          date: "2025-04-09",
+          category: "business",
+          popularity: 88,
+        },
+        {
+          id: 7,
+          title: "Digital Marketing Trends 2025",
+          summary:
+            "Expert analysis of emerging marketing strategies that are dominating the digital landscape.",
+          date: "2025-04-07",
+          category: "marketing",
+          popularity: 91,
+        },
+        {
+          id: 8,
+          title: "Sustainable Business Models",
+          summary:
+            "How industry leaders are integrating sustainability into their core business operations.",
+          date: "2025-04-03",
+          category: "business",
+          popularity: 82,
+        },
+        {
+          id: 9,
+          title: "Blockchain Revolution",
+          summary:
+            "How distributed ledger technology is transforming financial services and beyond.",
+          date: "2025-03-28",
+          category: "finance",
+          popularity: 76,
+        },
+        {
+          id: 10,
+          title: "Remote Work Success Stories",
+          summary:
+            "Companies thriving with distributed teams share their strategies and tools.",
+          date: "2025-03-25",
+          category: "workplace",
+          popularity: 84,
+        },
+        {
+          id: 11,
+          title: "Investment Strategies for 2025",
+          summary:
+            "Financial experts reveal their top recommendations for the current economic climate.",
+          date: "2025-04-11",
+          category: "finance",
+          popularity: 89,
+        },
+        {
+          id: 12,
+          title: "Customer Experience Evolution",
+          summary:
+            "How AI and personalization are redefining customer relationships across industries.",
+          date: "2025-04-02",
+          category: "business",
+          popularity: 79,
+        },
+        {
+          id: 13,
+          title: "Supply Chain Innovations",
+          summary:
+            "Breakthrough technologies solving global logistics challenges in real-time.",
+          date: "2025-03-22",
+          category: "business",
+          popularity: 81,
+        },
+        {
+          id: 14,
+          title: "Healthcare Technology Breakthroughs",
+          summary:
+            "Revolutionary medical innovations improving patient outcomes worldwide.",
+          date: "2025-03-18",
+          category: "health",
+          popularity: 93,
+        },
+        {
+          id: 15,
+          title: "Data Privacy in the Digital Age",
+          summary:
+            "Navigating the complex landscape of regulations and consumer expectations.",
+          date: "2025-04-04",
+          category: "tech",
+          popularity: 87,
+        },
+        {
+          id: 16,
+          title: "Leadership Skills for Tomorrow",
+          summary:
+            "Essential competencies for executives leading organizations through rapid change.",
+          date: "2025-03-30",
+          category: "leadership",
+          popularity: 86,
+        },
+        {
+          id: 17,
+          title: "Real Estate Market Analysis",
+          summary:
+            "Expert predictions on property trends and investment opportunities.",
+          date: "2025-03-27",
+          category: "finance",
+          popularity: 77,
+        },
+        {
+          id: 18,
+          title: "Digital Transformation Success Cases",
+          summary:
+            "How traditional businesses achieved remarkable results through technological innovation.",
+          date: "2025-04-06",
+          category: "business",
+          popularity: 90,
+        },
+        {
+          id: 19,
+          title: "The Psychology of Consumer Behavior",
+          summary:
+            "Understanding the subtle factors that influence purchasing decisions in today's market.",
+          date: "2025-03-15",
+          category: "marketing",
+          popularity: 72,
+        },
+        {
+          id: 20,
+          title: "Cybersecurity Threats and Solutions",
+          summary:
+            "Protecting your business in an increasingly vulnerable digital ecosystem.",
+          date: "2025-04-14",
+          category: "tech",
+          popularity: 94,
+        },
+      ];
+
+      const ITEMS_PER_PAGE = 6;
+      let currentPage = 1;
+      let currentView = "grid";
+      let loading = false;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupEventListeners();
+        initializeFilters();
+        renderArticles();
+        animateOnScroll();
+      });
+
+      function setupEventListeners() {
+        const searchInput = document.getElementById("searchInput");
+        searchInput.addEventListener(
+          "input",
+          debounce(() => {
+            currentPage = 1;
+            showLoader();
+            setTimeout(() => renderArticles(), 500);
+          }, 300)
+        );
+
+        document
+          .getElementById("resetFilters")
+          .addEventListener("click", () => {
+            resetFilters();
+            showLoader();
+            setTimeout(() => renderArticles(), 300);
+          });
+
+        document.querySelectorAll(".filter-section h3").forEach((header) => {
+          header.addEventListener("click", () => {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector("span");
+
+            // Close other open filters
+            document
+              .querySelectorAll(".filter-content.active")
+              .forEach((activeContent) => {
+                if (activeContent !== content) {
+                  activeContent.classList.remove("active");
+                  const activeHeader = activeContent.previousElementSibling;
+                  activeHeader.querySelector("span").classList.remove("active");
+                }
+              });
+
+            content.classList.toggle("active");
+            arrow.classList.toggle("active");
+          });
+        });
+
+        document
+          .querySelectorAll('input[type="radio"], input[type="checkbox"]')
+          .forEach((input) => {
+            input.addEventListener("change", () => {
+              currentPage = 1;
+              showLoader();
+              setTimeout(() => renderArticles(), 300);
+            });
+          });
+
+        document.getElementById("gridView").addEventListener("click", () => {
+          setView("grid");
+        });
+
+        document.getElementById("listView").addEventListener("click", () => {
+          setView("list");
+        });
+
+        // Newsletter form
+        document
+          .querySelector(".newsletter-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            const input = document.querySelector(".newsletter-input");
+            const value = input.value.trim();
+
+            if (value) {
+              // Simulate subscription
+              input.disabled = true;
+              const button = document.querySelector(".newsletter-button");
+              const originalText = button.textContent;
+              button.textContent = "Processing...";
+
+              setTimeout(() => {
+                input.value = "";
+                input.disabled = false;
+                button.textContent = "Thank you!";
+
+                setTimeout(() => {
+                  button.textContent = originalText;
+                }, 2000);
+              }, 1000);
+            }
+          });
+
+        // Add smooth scrolling for page navigation
+        window.addEventListener(
+          "scroll",
+          throttle(() => {
+            animateOnScroll();
+          }, 200)
+        );
+      }
+
+      function animateOnScroll() {
+        const staggerItems = document.querySelectorAll(
+          ".stagger-item:not(.animate-fade-up)"
+        );
+        staggerItems.forEach((item, index) => {
+          const rect = item.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.85) {
+            setTimeout(() => {
+              item.classList.add("animate-fade-up");
+            }, index * 100);
+          }
+        });
+      }
+
+      function initializeFilters() {
+        // Initialize first filter section to be open
+        const firstFilterSection = document.querySelector(".filter-section h3");
+        if (firstFilterSection) {
+          const content = firstFilterSection.nextElementSibling;
+          const arrow = firstFilterSection.querySelector("span");
+          content.classList.add("active");
+          arrow.classList.add("active");
+        }
+      }
+
+      function resetFilters() {
+        document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+          if (
+            (radio.getAttribute("name") === "date" && radio.value === "all") ||
+            (radio.getAttribute("name") === "popularity" &&
+              radio.value === "all") ||
+            (radio.getAttribute("name") === "sort" &&
+              radio.value === "date-desc")
+          ) {
+            radio.checked = true;
+          } else {
+            radio.checked = false;
+          }
+        });
+
+        document
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach((checkbox) => {
+            checkbox.checked = false;
+          });
+
+        document.getElementById("searchInput").value = "";
+      }
+
+      function setView(view) {
+        currentView = view;
+        const container = document.getElementById("articleContainer");
+
+        if (view === "grid") {
+          container.className = "article-grid";
+          document.getElementById("gridView").classList.add("active");
+          document.getElementById("listView").classList.remove("active");
+        } else {
+          container.className = "article-list";
+          document.getElementById("gridView").classList.remove("active");
+          document.getElementById("listView").classList.add("active");
+        }
+
+        // Immediately render articles and apply animation to make them visible
+        renderArticles();
+
+        // Force immediate visibility for initial articles
+        setTimeout(() => {
+          const visibleArticles = document.querySelectorAll(".article-item");
+          visibleArticles.forEach((article, index) => {
+            if (index < 3) {
+              // Make at least first 3 articles immediately visible
+              article.classList.add("animate-fade-up");
+            }
+          });
+        }, 50);
+      }
+
+      function showLoader() {
+        loading = true;
+        const container = document.getElementById("articleContainer");
+        container.innerHTML = `
+                <div class="loader">
+                    <div class="loader-dot"></div>
+                    <div class="loader-dot"></div>
+                    <div class="loader-dot"></div>
+                </div>
+            `;
+        document.getElementById("paginationContainer").innerHTML = "";
+        document.getElementById("articleCount").textContent = "0";
+      }
+
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      function throttle(func, limit) {
+        let inThrottle;
+        return function () {
+          const args = arguments;
+          const context = this;
+          if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => (inThrottle = false), limit);
+          }
+        };
+      }
+
+      function filterAndSortArticles() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const dateFilter =
+          document.querySelector('input[name="date"]:checked')?.value || "all";
+        const categories = Array.from(
+          document.querySelectorAll('input[name="category"]:checked')
+        ).map((input) => input.value);
+        const popularity =
+          document.querySelector('input[name="popularity"]:checked')?.value ||
+          "all";
+        const sort =
+          document.querySelector('input[name="sort"]:checked')?.value ||
+          "date-desc";
+
+        let filtered = articles.filter((article) => {
+          const matchesSearch =
+            article.title.toLowerCase().includes(searchTerm) ||
+            article.summary.toLowerCase().includes(searchTerm);
+
+          const articleDate = new Date(article.date);
+          const now = new Date();
+          let matchesDate = true;
+          if (dateFilter === "week") {
+            matchesDate = now - articleDate <= 7 * 24 * 60 * 60 * 1000;
+          } else if (dateFilter === "month") {
+            matchesDate = now - articleDate <= 30 * 24 * 60 * 60 * 1000;
+          }
+
+          const matchesCategory =
+            categories.length === 0 || categories.includes(article.category);
+
+          let matchesPopularity = true;
+          if (popularity === "trending") {
+            matchesPopularity = article.popularity > 80;
+          } else if (popularity === "most-read") {
+            matchesPopularity = article.popularity > 90;
+          }
+
+          return (
+            matchesSearch && matchesDate && matchesCategory && matchesPopularity
+          );
+        });
+
+        filtered.sort((a, b) => {
+          switch (sort) {
+            case "date-desc":
+              return new Date(b.date) - new Date(a.date);
+            case "date-asc":
+              return new Date(a.date) - new Date(b.date);
+            case "title-asc":
+              return a.title.localeCompare(b.title);
+            case "title-desc":
+              return b.title.localeCompare(a.title);
+            case "popularity-desc":
+              return b.popularity - a.popularity;
+            default:
+              return 0;
+          }
+        });
+
+        return filtered;
+      }
+
+      function getPopularityClass(popularity) {
+        if (popularity >= 90) return "high";
+        if (popularity >= 75) return "medium";
+        return "low";
+      }
+
+      function getPopularityIcon(popularity) {
+        if (popularity >= 90) return "fa-fire";
+        if (popularity >= 75) return "fa-chart-line";
+        return "fa-chart-bar";
+      }
+
+      function renderArticles() {
+        const filteredArticles = filterAndSortArticles();
+        const articleContainer = document.getElementById("articleContainer");
+        const paginationContainer = document.getElementById(
+          "paginationContainer"
+        );
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        const paginatedArticles = filteredArticles.slice(start, end);
+
+        // Update article counts - show current page count and total count
+        document.getElementById("articleCount").textContent =
+          paginatedArticles.length;
+        document.getElementById("totalArticleCount").textContent =
+          filteredArticles.length;
+
+        if (loading) {
+          loading = false;
+        }
+
+        // Clear container
+        articleContainer.innerHTML = "";
+
+        // Render articles
+        if (paginatedArticles.length === 0) {
+          articleContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon"><i class="fas fa-search"></i></div>
+                        <h3 class="no-results-title">No articles found</h3>
+                        <p class="no-results-message">Try adjusting your search or filters</p>
+                    </div>
+                `;
+        } else {
+          paginatedArticles.forEach((article, index) => {
+            // Apply animation class immediately for first 3 articles to make them visible without scrolling
+            const articleElement = document.createElement("div");
+            articleElement.className =
+              index < 3
+                ? "article-item animate-fade-up"
+                : "article-item stagger-item";
+
+            const formattedDate = new Date(article.date).toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }
+            );
+
+            const popularityClass = getPopularityClass(article.popularity);
+            const popularityIcon = getPopularityIcon(article.popularity);
+
+            articleElement.innerHTML = `
+                        <div class="article-content">
+                            <div class="article-category ${article.category}">${article.category}</div>
+                            <h2 class="article-title">${article.title}</h2>
+                            <div class="article-summary">${article.summary}</div>
+                        </div>
+                        <div class="article-meta">
+                            <div class="article-date"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
+                            <div class="article-popularity ${popularityClass}"><i class="fas ${popularityIcon}"></i> ${article.popularity}%</div>
+                        </div>
+                        <div class="article-read-more">Read Article <i class="fas fa-arrow-right"></i></div>
+                    `;
+
+            articleContainer.appendChild(articleElement);
+          });
+        }
+
+        // Render pagination
+        renderPagination(filteredArticles.length, paginationContainer);
+      }
+
+      function renderPagination(totalItems, container) {
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+        container.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        const paginationElement = document.createElement("div");
+        paginationElement.className = "pagination";
+
+        // Previous button
+        const prevButton = document.createElement("button");
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener("click", () => changePage(currentPage - 1));
+        paginationElement.appendChild(prevButton);
+
+        // Page numbers
+        let startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, startPage + 4);
+        startPage = Math.max(1, endPage - 4);
+
+        for (let i = startPage; i <= endPage; i++) {
+          const pageButton = document.createElement("button");
+          pageButton.textContent = i;
+          pageButton.className = i === currentPage ? "active" : "";
+          pageButton.disabled = i === currentPage;
+          pageButton.addEventListener("click", () => changePage(i));
+          paginationElement.appendChild(pageButton);
+        }
+
+        // Next button
+        const nextButton = document.createElement("button");
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener("click", () => changePage(currentPage + 1));
+        paginationElement.appendChild(nextButton);
+
+        container.appendChild(paginationElement);
+      }
+
+      function changePage(page) {
+        // Don't do anything if we're already on this page
+        if (currentPage === page) return;
+        
+        // Create and animate ripple where the user clicked
+        const clickEvent = event || window.event;
+        const x = clickEvent ? clickEvent.clientX : window.innerWidth / 2;
+        const y = clickEvent ? clickEvent.clientY : window.innerHeight / 2;
+        
+        // Create ripple element
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        document.body.appendChild(ripple);
+        
+        // Create overlay for page transition
+        const overlay = document.createElement('div');
+        overlay.className = 'page-transition-overlay';
+        document.body.appendChild(overlay);
+        
+        // Trigger animations
+        setTimeout(() => {
+          ripple.classList.add('animate');
+          overlay.classList.add('active');
+        }, 10);
+        
+        // Update current page
+        currentPage = page;
+        
+        // Prepare container for transition
+        const articleContainer = document.getElementById('articleContainer');
+        const articleContainerRect = articleContainer.getBoundingClientRect();
+        
+        // Create a wrapper if it doesn't exist
+        let wrapper = document.getElementById('article-wrapper');
+        if (!wrapper) {
+          wrapper = document.createElement('div');
+          wrapper.id = 'article-wrapper';
+          wrapper.className = 'article-wrapper';
+          articleContainer.parentNode.insertBefore(wrapper, articleContainer);
+          wrapper.appendChild(articleContainer);
+        }
+        
+        // Set height of wrapper to prevent page jump
+        wrapper.style.height = `${articleContainerRect.height}px`;
+        
+        // Apply fade out animation
+        articleContainer.style.opacity = '0';
+        articleContainer.style.transform = 'translateY(-8px)';
+        articleContainer.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Smooth scroll to articles area
+        window.scrollTo({
+          top: wrapper.offsetTop - 20,
+          behavior: 'smooth'
+        });
+        
+        // Process page change after animations
+        setTimeout(() => {
+          // Create loader while preparing new content
+          showLoader();
+          
+          // Remove transition elements
+          setTimeout(() => {
+            ripple.remove();
+            overlay.remove();
+            
+            // Render the new content
+            renderArticles();
+            
+            // Make the new articles appear with staggered animation
+            const articles = document.querySelectorAll('.article-item');
+            articles.forEach((article, index) => {
+              article.classList.add('page-transition-item');
+              article.style.setProperty('--animation-order', index);
+            });
+            
+            // Update wrapper height to match new content
+            setTimeout(() => {
+              const newHeight = articleContainer.getBoundingClientRect().height;
+              wrapper.style.height = `${newHeight}px`;
+              
+              // Reset wrapper height after transition
+              setTimeout(() => {
+                wrapper.style.height = 'auto';
+              }, 300);
+            }, 100);
+          }, 300);
+        }, 450);
+      }
+    </script>
+  </body>
+</html>

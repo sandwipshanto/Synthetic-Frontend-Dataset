@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editorial Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom styles for carousel transitions */
+      .carousel-item {
+        transition: opacity 0.5s ease-in-out;
+        background-size: cover;
+        background-position: center;
+      }
+      .carousel-item:not(.active) {
+        opacity: 0;
+      }
+      .carousel-item.active {
+        opacity: 1;
+      }
+      /* Ensure serif font consistency */
+      body {
+        font-family: "Georgia", serif;
+      }
+      /* Simple category filter animation */
+      .category-btn {
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 0.25rem 0.5rem;
+      }
+      .category-btn::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background-color: #dc2626;
+        transition: width 0.3s ease;
+      }
+      .category-btn:hover::after,
+      .category-btn.active::after {
+        width: 100%;
+      }
+      .category-btn.active {
+        color: #dc2626;
+      }
+      /* Clean article animation and layout handling */
+      #articles {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2.5rem;
+        position: relative;
+        min-height: 600px;
+        align-items: start;
+      }
+
+      .articles-container {
+        position: relative;
+        margin-bottom: 0; /* Removed margin-bottom */
+        height: auto !important; /* Changed from fixed height to auto */
+        padding-bottom: 6rem; /* Added consistent padding instead */
+      }
+
+      .article-card {
+        display: flex;
+        flex-direction: column;
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        height: auto;
+        position: relative;
+        background: white;
+        align-self: flex-start;
+      }
+
+      .article-card.hidden {
+        position: absolute;
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+        z-index: -1;
+        visibility: hidden;
+      }
+
+      /* Article popup styling */
+      .article-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .article-popup-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .article-popup {
+        position: relative;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        background-color: white;
+        border-radius: 0.5rem;
+        overflow-y: auto;
+        transform: translateY(20px);
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .article-popup-overlay.active .article-popup {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .article-popup-header {
+        position: relative;
+        height: 320px;
+        overflow: hidden;
+      }
+
+      .article-popup-header img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .article-popup-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        z-index: 10;
+      }
+
+      .article-popup-close:hover {
+        background-color: white;
+      }
+
+      .article-popup-content {
+        padding: 2rem;
+      }
+
+      /* Article card hover effect to indicate clickable */
+      .article-card {
+        cursor: pointer;
+      }
+
+      /* Style for article-specific comments */
+      .article-comments {
+        margin-top: 2rem;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 2rem;
+      }
+
+      /* Prevent body scrolling when popup is open */
+      body.popup-open {
+        overflow: hidden;
+      }
+
+      /* Prevent page shift when modal opens */
+      html {
+        scrollbar-width: thin; /* For Firefox */
+        overflow-y: scroll; /* Always show scrollbar */
+      }
+
+      html.popup-open {
+        overflow-y: hidden; /* Hide scrollbar when popup open */
+      }
+
+      /* Add padding to match scrollbar width to prevent layout shift */
+      html.popup-open body {
+        padding-right: 17px; /* Standard scrollbar width in most browsers */
+      }
+
+      /* For Safari and Chrome */
+      html::-webkit-scrollbar {
+        width: 17px; /* Match the default scrollbar width */
+      }
+
+      /* Prevent body scrolling when popup is open */
+      body.popup-open {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8f5f0] text-gray-800 leading-relaxed">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-sm py-6 z-50">
+      <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <a href="#" class="text-3xl font-bold text-gray-900 tracking-tight"
+          >The Editorial</a
+        >
+        <ul class="flex space-x-10">
+          <li>
+            <a
+              href="#home"
+              class="text-lg text-gray-700 hover:text-red-600 transition-colors"
+              >Home</a
+            >
+          </li>
+          <li>
+            <a
+              href="#articles"
+              class="text-lg text-gray-700 hover:text-red-600 transition-colors"
+              >Articles</a
+            >
+          </li>
+          <li>
+            <a
+              href="#about"
+              class="text-lg text-gray-700 hover:text-red-600 transition-colors"
+              >About</a
+            >
+          </li>
+          <li>
+            <a
+              href="#contact"
+              class="text-lg text-gray-700 hover:text-red-600 transition-colors"
+              >Contact</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Featured Carousel -->
+    <div class="relative h-[600px] overflow-hidden mt-24">
+      <div class="carousel-inner relative w-full h-full">
+        <div
+          class="carousel-item absolute inset-0 flex items-center justify-center text-white text-center p-8 active"
+          style="
+            background-image: url('https://images.unsplash.com/photo-1513001900722-370f803f498d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&h=600&q=80');
+          "
+        >
+          <div class="max-w-3xl">
+            <h2
+              class="text-4xl md:text-5xl font-bold drop-shadow-lg leading-tight"
+            >
+              The Art of Storytelling
+            </h2>
+            <p class="text-lg md:text-xl drop-shadow-md mt-4">
+              A deep dive into the craft of weaving compelling narratives.
+            </p>
+          </div>
+        </div>
+        <div
+          class="carousel-item absolute inset-0 flex items-center justify-center text-white text-center p-8"
+          style="
+            background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&h=600&q=80');
+          "
+        >
+          <div class="max-w-3xl">
+            <h2
+              class="text-4xl md:text-5xl font-bold drop-shadow-lg leading-tight"
+            >
+              Journey Through the Unknown
+            </h2>
+            <p class="text-lg md:text-xl drop-shadow-md mt-4">
+              Exploring uncharted territories and their hidden wonders.
+            </p>
+          </div>
+        </div>
+        <div
+          class="carousel-item absolute inset-0 flex items-center justify-center text-white text-center p-8"
+          style="
+            background-image: url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&h=600&q=80');
+          "
+        >
+          <div class="max-w-3xl">
+            <h2
+              class="text-4xl md:text-5xl font-bold drop-shadow-lg leading-tight"
+            >
+              Living with Intention
+            </h2>
+            <p class="text-lg md:text-xl drop-shadow-md mt-4">
+              A guide to a mindful and purposeful lifestyle.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute top-1/2 w-full flex justify-between px-8 transform -translate-y-1/2"
+      >
+        <button
+          id="prevBtn"
+          class="bg-black bg-opacity-50 text-white text-2xl p-3 hover:bg-opacity-70 transition-colors"
+        >
+          &larr;
+        </button>
+        <button
+          id="nextBtn"
+          class="bg-black bg-opacity-50 text-white text-2xl p-3 hover:bg-opacity-70 transition-colors"
+        >
+          &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="max-w-7xl mx-auto px-6 pt-16 pb-4" id="category-filters">
+      <h2 class="text-3xl font-semibold text-gray-900 mb-6">Explore Topics</h2>
+      <div class="flex flex-wrap gap-4 mb-6">
+        <button
+          class="category-btn active text-lg hover:text-red-600 transition-colors"
+          data-category="all"
+        >
+          All
+        </button>
+        <button
+          class="category-btn text-lg hover:text-red-600 transition-colors"
+          data-category="art"
+        >
+          Art & Culture
+        </button>
+        <button
+          class="category-btn text-lg hover:text-red-600 transition-colors"
+          data-category="travel"
+        >
+          Travel
+        </button>
+        <button
+          class="category-btn text-lg hover:text-red-600 transition-colors"
+          data-category="lifestyle"
+        >
+          Lifestyle
+        </button>
+        <button
+          class="category-btn text-lg hover:text-red-600 transition-colors"
+          data-category="philosophy"
+        >
+          Philosophy
+        </button>
+        <button
+          class="category-btn text-lg hover:text-red-600 transition-colors"
+          data-category="design"
+        >
+          Design
+        </button>
+      </div>
+      <div class="w-full h-px bg-gray-200 mb-8"></div>
+    </div>
+
+    <!-- Articles Container Wrapper -->
+    <div
+      class="articles-container max-w-7xl mx-auto px-6"
+      id="articles-wrapper"
+    >
+      <!-- Article Previews -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 pb-24"
+        id="articles"
+      >
+        <div
+          class="article-card bg-white shadow-sm p-6 hover:-translate-y-1 transition-transform"
+          data-category="art"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80"
+            alt="Modern Art"
+            class="w-full h-52 object-cover mb-4"
+          />
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Art & Culture</span
+          >
+          <h3 class="text-2xl font-semibold text-gray-900 mb-3 mt-2">
+            The Rise of Modern Art
+          </h3>
+          <p class="text-gray-600 text-base">
+            Exploring how contemporary artists are reshaping the cultural
+            landscape.
+          </p>
+        </div>
+        <div
+          class="article-card bg-white shadow-sm p-6 hover:-translate-y-1 transition-transform"
+          data-category="travel"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80"
+            alt="European Architecture"
+            class="w-full h-52 object-cover mb-4"
+          />
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Travel</span
+          >
+          <h3 class="text-2xl font-semibold text-gray-900 mb-3 mt-2">
+            Hidden Gems of Europe
+          </h3>
+          <p class="text-gray-600 text-base">
+            Unveiling the lesser-known destinations that captivate the soul.
+          </p>
+        </div>
+        <div
+          class="article-card bg-white shadow-sm p-6 hover:-translate-y-1 transition-transform"
+          data-category="lifestyle"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80"
+            alt="Minimalist Interior"
+            class="w-full h-52 object-cover mb-4"
+          />
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Lifestyle</span
+          >
+          <h3 class="text-2xl font-semibold text-gray-900 mb-3 mt-2">
+            The Art of Minimalism
+          </h3>
+          <p class="text-gray-600 text-base">
+            Embracing simplicity for a clutter-free life.
+          </p>
+        </div>
+        <div
+          class="article-card bg-white shadow-sm p-6 hover:-translate-y-1 transition-transform"
+          data-category="philosophy"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80"
+            alt="Book with coffee"
+            class="w-full h-52 object-cover mb-4"
+          />
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Philosophy</span
+          >
+          <h3 class="text-2xl font-semibold text-gray-900 mb-3 mt-2">
+            The Examined Life
+          </h3>
+          <p class="text-gray-600 text-base">
+            Exploring ancient wisdom in the modern world and its practical
+            applications.
+          </p>
+        </div>
+        <div
+          class="article-card bg-white shadow-sm p-6 hover:-translate-y-1 transition-transform"
+          data-category="design"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80"
+            alt="Design workspace"
+            class="w-full h-52 object-cover mb-4"
+          />
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Design</span
+          >
+          <h3 class="text-2xl font-semibold text-gray-900 mb-3 mt-2">
+            Design That Speaks
+          </h3>
+          <p class="text-gray-600 text-base">
+            How meaningful design creates connections and transforms
+            experiences.
+          </p>
+        </div>
+        <div
+          class="article-card bg-white shadow-sm p-6 hover:-translate-y-1 transition-transform"
+          data-category="art"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80"
+            alt="Photography landscape"
+            class="w-full h-52 object-cover mb-4"
+          />
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Art & Culture</span
+          >
+          <h3 class="text-2xl font-semibold text-gray-900 mb-3 mt-2">
+            The Art of Seeing
+          </h3>
+          <p class="text-gray-600 text-base">
+            Photography as a medium for storytelling and cultural documentation.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Our Editorial Vision Parallax -->
+    <div
+      class="relative py-48 bg-fixed bg-center bg-cover"
+      style="
+        background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+      "
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+      <div class="relative max-w-5xl mx-auto px-6">
+        <h2
+          class="text-5xl font-light text-white mb-8 tracking-wide text-center"
+        >
+          Our Editorial Vision
+        </h2>
+        <div class="w-24 h-1 bg-red-600 mx-auto mb-8"></div>
+        <p
+          class="text-xl text-white text-center font-light leading-relaxed max-w-3xl mx-auto"
+        >
+          Curating stories that challenge perspectives and inspire meaningful
+          conversations. We believe in the power of thoughtful writing to
+          transform how we see the world.
+        </p>
+      </div>
+    </div>
+
+    <!-- About the Author -->
+    <div class="relative max-w-5xl mx-auto px-6 my-24">
+      <div
+        class="absolute left-0 right-0 h-40 bg-[#f8f5f0] -z-10 transform -skew-y-3"
+      ></div>
+      <div
+        class="bg-white shadow-md p-8 md:p-12 flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12 relative"
+      >
+        <div class="relative">
+          <div
+            class="absolute inset-0 border-2 border-red-600 rounded-full transform translate-x-2 translate-y-2 -z-10"
+          ></div>
+          <img
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+            alt="Author"
+            class="w-48 h-48 rounded-full object-cover shadow-lg border-4 border-white"
+          />
+        </div>
+        <div class="md:flex-1">
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600"
+            >Founder & Editor-in-Chief</span
+          >
+          <h3 class="text-3xl font-semibold text-gray-900 mb-4 mt-1">
+            Jane Doe
+          </h3>
+          <p class="text-gray-600 text-lg leading-relaxed mb-6">
+            Jane is a passionate writer with a love for storytelling and
+            exploration. With over a decade of experience in literary
+            journalism, she crafts narratives that inspire and inform, blending
+            creativity with insight.
+          </p>
+          <div class="flex space-x-4">
+            <a
+              href="#"
+              class="text-gray-500 hover:text-red-600 transition-colors"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"
+                ></path>
+              </svg>
+            </a>
+            <a
+              href="#"
+              class="text-gray-500 hover:text-red-600 transition-colors"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </a>
+            <a
+              href="#"
+              class="text-gray-500 hover:text-red-600 transition-colors"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="relative max-w-5xl mx-auto px-6 py-24">
+      <h3 class="text-3xl font-semibold text-gray-900 mb-8">
+        Join the Conversation
+      </h3>
+
+      <div class="bg-white shadow-md p-8 relative mb-12">
+        <div class="absolute top-0 left-0 w-1 h-full bg-red-600"></div>
+        <form id="commentForm" class="space-y-6">
+          <div class="flex items-center space-x-4 mb-6">
+            <div
+              class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <p class="font-medium text-gray-700">Share your perspective</p>
+          </div>
+
+          <textarea
+            id="commentText"
+            placeholder="What are your thoughts on this piece?"
+            rows="4"
+            class="w-full p-4 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-base transition-all"
+          ></textarea>
+          <input type="hidden" id="replyToId" value="" />
+          <div
+            id="replyingToContainer"
+            class="bg-gray-50 p-3 rounded text-sm flex items-center justify-between hidden"
+          >
+            <span
+              >Replying to: <span id="replyingToUser" class="font-medium"></span
+            ></span>
+            <button
+              type="button"
+              id="cancelReply"
+              class="text-gray-500 hover:text-red-600"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700 transition-colors text-base flex items-center space-x-2 shadow-sm"
+            >
+              <span>Post Comment</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="mb-8">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xl font-medium text-gray-900">Reader Comments</h4>
+          <span class="text-sm text-gray-500"
+            ><span id="commentCount">2</span> comments</span
+          >
+        </div>
+        <div class="w-full h-px bg-gray-200 my-4"></div>
+      </div>
+
+      <div id="commentList" class="space-y-8">
+        <!-- Comments will be populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Inspiration Everywhere Parallax -->
+    <div
+      class="relative py-44 bg-fixed bg-center bg-cover"
+      style="
+        background-image: url('https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+      "
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="relative max-w-4xl mx-auto px-6 text-center text-white">
+        <h2 class="text-4xl font-light mb-6">Inspiration Everywhere</h2>
+        <p class="text-xl font-light max-w-3xl mx-auto">
+          Finding beauty in the ordinary and extraordinary moments that shape
+          our stories.
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+      <div class="max-w-7xl mx-auto px-6 py-20">
+        <!-- Top Section -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <!-- Brand Section -->
+          <div class="col-span-1 md:col-span-2">
+            <h3 class="text-3xl font-bold mb-6">The Editorial</h3>
+            <p class="text-gray-300 mb-4 max-w-md">
+              We craft thoughtful perspectives on art, culture, and the human
+              experience. Our mission is to inspire, inform, and provoke
+              meaningful conversations.
+            </p>
+            <div class="flex space-x-4 mt-6">
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 text-gray-200">Categories</h4>
+            <ul class="space-y-2 text-gray-300">
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >Art & Culture</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >Travel</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >Lifestyle</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >Philosophy</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >Design</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Subscribe -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 text-gray-200">Subscribe</h4>
+            <p class="text-gray-300 mb-4">
+              Join our newsletter for weekly updates
+            </p>
+            <form class="flex">
+              <input
+                type="email"
+                placeholder="Your email"
+                class="w-full p-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <button
+                type="submit"
+                class="bg-red-600 px-4 hover:bg-red-700 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div
+          class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center"
+        >
+          <p class="text-gray-400 text-sm">
+            &copy; 2025 The Editorial. All rights reserved.
+          </p>
+          <div class="flex space-x-6 mt-4 md:mt-0">
+            <a
+              href="#"
+              class="text-sm text-gray-400 hover:text-white transition-colors"
+              >Privacy Policy</a
+            >
+            <a
+              href="#"
+              class="text-sm text-gray-400 hover:text-white transition-colors"
+              >Terms of Service</a
+            >
+            <a
+              href="#"
+              class="text-sm text-gray-400 hover:text-white transition-colors"
+              >Contact</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Article Popup -->
+    <div class="article-popup-overlay" id="articlePopup">
+      <div class="article-popup">
+        <div class="article-popup-header">
+          <img src="" alt="Article Image" class="popup-image" />
+          <div class="article-popup-close">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather feather-x"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="article-popup-content">
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-red-600 popup-category"
+          ></span>
+          <h2
+            class="text-3xl font-semibold text-gray-900 mb-4 mt-2 popup-title"
+          ></h2>
+          <div
+            class="popup-content prose max-w-none text-gray-700 leading-relaxed"
+          ></div>
+
+          <!-- Article-specific comments section -->
+          <div class="article-comments">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-6">Comments</h3>
+            <form class="article-comment-form space-y-4 mb-8">
+              <textarea
+                placeholder="Share your thoughts on this article..."
+                rows="4"
+                class="w-full p-4 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-base"
+              ></textarea>
+              <button
+                type="submit"
+                class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors text-base"
+              >
+                Post Comment
+              </button>
+            </form>
+            <div class="article-comment-list space-y-6">
+              <!-- Comments will be loaded here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Carousel Functionality
+      const carouselItems = document.querySelectorAll(".carousel-item");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      let currentIndex = 0;
+      let autoRotate;
+
+      function showSlide(index) {
+        carouselItems.forEach((item, i) => {
+          item.classList.toggle("active", i === index);
+        });
+      }
+
+      function nextSlide() {
+        currentIndex = (currentIndex + 1) % carouselItems.length;
+        showSlide(currentIndex);
+      }
+
+      function prevSlide() {
+        currentIndex =
+          (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+        showSlide(currentIndex);
+      }
+
+      function startAutoRotate() {
+        autoRotate = setInterval(nextSlide, 5000);
+      }
+
+      function stopAutoRotate() {
+        clearInterval(autoRotate);
+      }
+
+      nextBtn.addEventListener("click", () => {
+        stopAutoRotate();
+        nextSlide();
+        startAutoRotate();
+      });
+
+      prevBtn.addEventListener("click", () => {
+        stopAutoRotate();
+        prevSlide();
+        startAutoRotate();
+      });
+
+      startAutoRotate();
+
+      // Comment System Functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        // Sample comments data
+        const initialComments = [
+          {
+            id: 1,
+            text: "This was a beautifully written piece—really enjoyed it! The author's perspective on the subject is both refreshing and thought-provoking.",
+            author: "John",
+            date: "2 days ago",
+            likes: 5,
+            isLiked: false,
+            parentId: null,
+          },
+          {
+            id: 2,
+            text: "I agree with John. The insights presented here are incredibly relevant to our current cultural moment. Looking forward to reading more from this author.",
+            author: "Sarah",
+            date: "1 day ago",
+            likes: 3,
+            isLiked: false,
+            parentId: 1,
+          },
+        ];
+
+        const commentForm = document.getElementById("commentForm");
+        const commentList = document.getElementById("commentList");
+        const commentText = document.getElementById("commentText");
+        const replyToId = document.getElementById("replyToId");
+        const replyingToContainer = document.getElementById(
+          "replyingToContainer"
+        );
+        const replyingToUser = document.getElementById("replyingToUser");
+        const cancelReply = document.getElementById("cancelReply");
+        const commentCount = document.getElementById("commentCount");
+
+        let currentComments = [...initialComments];
+        let nextCommentId = 3;
+        let replyingTo = null;
+
+        // Initialize comments
+        renderComments();
+        updateCommentCount();
+
+        // Comment form submission
+        commentForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const text = commentText.value.trim();
+          if (text) {
+            const newComment = {
+              id: nextCommentId++,
+              text: text,
+              author: "You",
+              date: "just now",
+              likes: 0,
+              isLiked: false,
+              parentId: replyingTo,
+            };
+
+            // Add to comments
+            currentComments.unshift(newComment);
+
+            // Reset form
+            commentText.value = "";
+            if (replyingTo) {
+              resetReplyForm();
+            }
+
+            // Update display
+            renderComments();
+            updateCommentCount();
+          }
+        });
+
+        // Cancel reply button
+        if (cancelReply) {
+          cancelReply.addEventListener("click", resetReplyForm);
+        }
+
+        // Function to render comments with reply indentation
+        function renderComments() {
+          commentList.innerHTML = "";
+
+          // First render parent comments
+          const parentComments = currentComments.filter(
+            (comment) => !comment.parentId
+          );
+          parentComments.forEach((comment) => {
+            const commentEl = createCommentElement(comment);
+            commentList.appendChild(commentEl);
+
+            // Then render replies under each parent
+            const replies = currentComments.filter(
+              (reply) => reply.parentId === comment.id
+            );
+            replies.forEach((reply) => {
+              const replyEl = createCommentElement(reply, true);
+              commentList.appendChild(replyEl);
+            });
+          });
+        }
+
+        // Create comment HTML element
+        function createCommentElement(comment, isReply = false) {
+          const commentDiv = document.createElement("div");
+          commentDiv.className = isReply
+            ? "bg-white shadow-sm p-6 relative ml-8 md:ml-12"
+            : "bg-white shadow-sm p-6 relative";
+
+          // Determine border color (use red color for main comments, gray for replies)
+          const borderColorClass = isReply
+            ? "bg-gray-300"
+            : "bg-red-600 opacity-50";
+
+          // Generate random avatar image from placeholder service
+          // Use consistent avatars based on user name
+          const avatarSrc = `https://i.pravatar.cc/40?u=${comment.author}${comment.id}`;
+
+          commentDiv.innerHTML = `
+            <div class="absolute top-0 left-0 w-1 h-full ${borderColorClass}"></div>
+            <div class="flex items-start">
+              <img 
+                src="${avatarSrc}" 
+                alt="${comment.author}" 
+                class="w-10 h-10 rounded-full object-cover mr-4"
+              />
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                  <h5 class="font-medium text-gray-900">${comment.author}</h5>
+                  <span class="text-xs text-gray-500">${comment.date}</span>
+                </div>
+                <p class="text-gray-600 text-base">${comment.text}</p>
+                <div class="flex items-center mt-4 text-sm text-gray-500">
+                  <button class="like-button flex items-center hover:text-red-600 transition-colors mr-6" data-id="${
+                    comment.id
+                  }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 ${
+                      comment.isLiked ? "text-red-600" : ""
+                    }" fill="${
+            comment.isLiked ? "currentColor" : "none"
+          }" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                    </svg>
+                    <span>${comment.likes}</span>
+                  </button>
+                  <button class="reply-button flex items-center hover:text-red-600 transition-colors" data-id="${
+                    comment.id
+                  }" data-author="${comment.author}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    <span>Reply</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Add event listeners for like and reply buttons
+          setTimeout(() => {
+            const likeBtn = commentDiv.querySelector(".like-button");
+            const replyBtn = commentDiv.querySelector(".reply-button");
+
+            if (likeBtn) {
+              likeBtn.addEventListener("click", () => {
+                const commentId = parseInt(likeBtn.getAttribute("data-id"));
+                handleLike(commentId);
+              });
+            }
+
+            if (replyBtn) {
+              replyBtn.addEventListener("click", () => {
+                const commentId = parseInt(replyBtn.getAttribute("data-id"));
+                const author = replyBtn.getAttribute("data-author");
+                handleReply(commentId, author);
+              });
+            }
+          }, 0);
+
+          return commentDiv;
+        }
+
+        // Handle like button clicks
+        function handleLike(commentId) {
+          const comment = currentComments.find((c) => c.id === commentId);
+          if (comment) {
+            if (comment.isLiked) {
+              comment.likes--;
+              comment.isLiked = false;
+            } else {
+              comment.likes++;
+              comment.isLiked = true;
+            }
+            renderComments();
+          }
+        }
+
+        // Handle reply button clicks
+        function handleReply(commentId, author) {
+          replyingTo = commentId;
+          replyToId.value = commentId;
+          replyingToUser.textContent = author;
+          replyingToContainer.classList.remove("hidden");
+          commentText.placeholder = `Reply to ${author}...`;
+          commentText.focus();
+        }
+
+        // Reset reply form
+        function resetReplyForm() {
+          replyingTo = null;
+          replyToId.value = "";
+          replyingToContainer.classList.add("hidden");
+          commentText.placeholder = "What are your thoughts on this piece?";
+        }
+
+        // Update comment count
+        function updateCommentCount() {
+          commentCount.textContent = currentComments.length;
+        }
+      });
+
+      // Category Filter Functionality - Simplified for cleaner transitions
+      document.addEventListener("DOMContentLoaded", function () {
+        const categoryButtons = document.querySelectorAll(".category-btn");
+        const articleCards = document.querySelectorAll(".article-card");
+        const articlesContainer = document.getElementById("articles");
+        const articlesWrapper = document.getElementById("articles-wrapper");
+
+        // Set fixed height for the container to maintain layout stability
+        const initialHeight = 1250; // Fixed height in pixels
+        articlesWrapper.style.height = initialHeight + "px";
+
+        categoryButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            // Don't do anything if already active
+            if (this.classList.contains("active")) return;
+
+            // Remove active class from all buttons
+            categoryButtons.forEach((btn) => btn.classList.remove("active"));
+            // Add active class to clicked button
+            this.classList.add("active");
+
+            const selectedCategory = this.getAttribute("data-category");
+
+            // Simple two-step transition
+            // 1. First hide all cards that don't match
+            articleCards.forEach((card) => {
+              if (
+                selectedCategory !== "all" &&
+                card.getAttribute("data-category") !== selectedCategory
+              ) {
+                // Fade out
+                card.style.opacity = "0";
+                card.style.transform = "translateY(10px)";
+
+                // After animation completes, hide completely
+                setTimeout(() => {
+                  card.classList.add("hidden");
+                }, 300); // Match the CSS transition duration
+              }
+            });
+
+            // 2. Then show matching cards with a slight delay
+            setTimeout(() => {
+              articleCards.forEach((card) => {
+                if (
+                  selectedCategory === "all" ||
+                  card.getAttribute("data-category") === selectedCategory
+                ) {
+                  // Remove hidden class
+                  card.classList.remove("hidden");
+
+                  // Give browser time to process
+                  setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                  }, 10);
+                }
+              });
+            }, 300); // Wait for the first transition to complete
+          });
+        });
+      });
+
+      // Article Popup Functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const articlePopup = document.getElementById("articlePopup");
+        const articleCards = document.querySelectorAll(".article-card");
+        const popupClose = document.querySelector(".article-popup-close");
+        const popupImage = document.querySelector(".popup-image");
+        const popupCategory = document.querySelector(".popup-category");
+        const popupTitle = document.querySelector(".popup-title");
+        const popupContent = document.querySelector(".popup-content");
+        const body = document.body;
+
+        // Store article comments separately for each article
+        const articleComments = {};
+
+        // Sample expanded article content (in a real app, this would come from a database)
+        const articleData = {
+          "The Rise of Modern Art": {
+            content: `<p class="mb-6">Modern art represents a pivotal shift in artistic expression that began in the late 19th century and continues to evolve today. This movement broke away from traditional academic conventions, challenging established norms and embracing new ideas about what art could be.</p>
+            
+            <p class="mb-6">Artists like Pablo Picasso, Wassily Kandinsky, and Marcel Duchamp spearheaded this revolution, introducing radical concepts that would forever change our understanding of art. They questioned the very purpose of artistic creation and the role of the artist in society.</p>
+            
+            <p class="mb-6">The rise of modern art coincided with a period of rapid technological advancement and social change. As photography became more prevalent, artists were freed from the obligation of realistic representation, allowing them to explore new forms of expression through abstraction, symbolism, and conceptual approaches.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Key Movements in Modern Art</h3>
+            
+            <p class="mb-4">Several distinct movements emerged within modern art, each with its unique characteristics and philosophy:</p>
+            
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+              <li><strong>Impressionism:</strong> Focused on capturing light and its changing qualities, often painting outdoors (en plein air).</li>
+              <li><strong>Expressionism:</strong> Sought to express emotional experience rather than physical reality.</li>
+              <li><strong>Cubism:</strong> Rejected the single viewpoint perspective in favor of depicting subjects from multiple angles simultaneously.</li>
+              <li><strong>Surrealism:</strong> Explored the unconscious mind and dreams, creating illogical scenes with photographic precision.</li>
+              <li><strong>Abstract Expressionism:</strong> Emphasized spontaneous creation and emotional intensity with non-representational forms.</li>
+            </ul>
+            
+            <p>Today, contemporary artists continue to build upon these foundations, incorporating new media and addressing current social issues while honoring the innovative spirit that defined modern art's origins.</p>`,
+            comments: [
+              {
+                text: "This article perfectly captures the essence of modern art's impact on society.",
+                author: "ArtLover22",
+                date: "April 12, 2025",
+              },
+              {
+                text: "I've always been fascinated by how Picasso challenged traditional perspectives. This was a great read!",
+                author: "GalleryVisitor",
+                date: "April 14, 2025",
+              },
+            ],
+          },
+          "Hidden Gems of Europe": {
+            content: `<p class="mb-6">Beyond Europe's iconic landmarks and tourist hotspots lies a treasure trove of lesser-known destinations waiting to be discovered. These hidden gems offer authentic cultural experiences without the overwhelming crowds.</p>
+            
+            <p class="mb-6">While millions flock to Paris, Rome, and Barcelona each year, savvy travelers are increasingly seeking out alternative destinations that offer equally enriching experiences with a fraction of the tourism impact.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Undiscovered Coastal Havens</h3>
+            
+            <p class="mb-6">The Croatian town of Rovinj remains one of the Adriatic's best-kept secrets. With its colorful buildings perched dramatically over crystalline waters and narrow cobblestone streets, it offers Mediterranean charm without the overwhelming summer crowds found in more famous coastal destinations.</p>
+            
+            <p class="mb-6">Further north, the rugged coastline of Galicia, Spain presents an alternative to the country's more developed Mediterranean shores. Here, ancient Celtic influences blend with Spanish culture, creating a unique atmosphere complemented by some of Europe's finest seafood and stunning Atlantic beaches often left entirely to yourself, even in summer months.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Mountain Retreats Beyond the Alps</h3>
+            
+            <p class="mb-6">While the Swiss and French Alps draw millions of visitors, the Pirin Mountains of Bulgaria offer spectacular alpine scenery, excellent hiking, and charming mountain villages at a fraction of the cost. The town of Bansko serves as an ideal base for exploring this UNESCO World Heritage site.</p>
+            
+            <p class="mb-6">Similarly, Slovenia's Julian Alps provide breathtaking mountain landscapes centered around Lake Bled and its iconic island church. Despite its postcard-perfect beauty, this region remains relatively uncrowded compared to its Alpine neighbors.</p>
+            
+            <p>As overtourism concerns grow, these hidden gems represent not just opportunities for more authentic travel experiences, but also a more sustainable approach to exploring Europe's rich cultural and natural heritage.</p>`,
+            comments: [
+              {
+                text: "I visited Rovinj last summer based on a friend's recommendation and it was absolutely magical!",
+                author: "TravelExplorer",
+                date: "April 5, 2025",
+              },
+            ],
+          },
+          "The Art of Minimalism": {
+            content: `<p class="mb-6">Minimalism has emerged as more than just an aesthetic—it's become a purposeful approach to living that focuses on the principle that less is more. By eliminating excess and keeping only what adds value, minimalists create space for what truly matters.</p>
+            
+            <p class="mb-6">The minimalist philosophy extends beyond design into a lifestyle that questions our relationship with material possessions. It asks us to consider what we really need versus what we accumulate out of habit, social pressure, or momentary desire.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">The Psychological Benefits</h3>
+            
+            <p class="mb-6">Research increasingly supports the psychological benefits of minimalist living. A decluttered physical space often translates to a clearer mental state, with studies showing that excessive possessions can contribute to stress, anxiety, and reduced focus.</p>
+            
+            <p class="mb-6">Beyond mental clarity, minimalism fosters intentionality—making conscious choices about what deserves our space, time, and attention. This mindfulness naturally extends to consumption habits, often resulting in more sustainable living practices.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Practical Approaches to Minimalism</h3>
+            
+            <p class="mb-6">Embracing minimalism doesn't require radical change. Many practitioners recommend starting with a simple question when considering possessions: "Does this add value to my life?" This criterion shifts focus from quantity to quality and function.</p>
+            
+            <p class="mb-6">The "one in, one out" rule provides another accessible entry point—for every new item acquired, another must be removed. This practice maintains equilibrium and prompts reflection before new purchases.</p>
+            
+            <blockquote class="italic border-l-4 border-gray-300 pl-4 my-6 text-gray-600">
+              "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away." — Antoine de Saint-Exupéry
+            </blockquote>
+            
+            <p>In a world that constantly pushes us toward more—more consumption, more activities, more information—minimalism offers a refreshing counternarrative: the possibility that our best lives might be found not through accumulation, but through thoughtful curation.</p>`,
+            comments: [
+              {
+                text: "I've been practicing minimalism for two years now, and it's completely transformed my relationship with possessions and consumption.",
+                author: "SimpleLiving",
+                date: "April 15, 2025",
+              },
+              {
+                text: "The quote from Antoine de Saint-Exupéry perfectly captures the essence of minimalism. Beautiful article!",
+                author: "LessIsMore",
+                date: "April 15, 2025",
+              },
+            ],
+          },
+          "The Examined Life": {
+            content: `<p class="mb-6">When Socrates declared that "the unexamined life is not worth living," he issued an invitation that has resonated through centuries—a call to conscious reflection that remains perhaps more relevant than ever in our distracted modern world.</p>
+            
+            <p class="mb-6">The examined life involves questioning our assumptions, understanding our motivations, and aligning our actions with our deepest values. It's an ongoing process of self-inquiry that leads to greater authenticity and purpose.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Ancient Wisdom in Modern Context</h3>
+            
+            <p class="mb-6">The Stoic philosophers—including Marcus Aurelius, Epictetus, and Seneca—developed practical approaches to living well that have experienced a remarkable resurgence in popularity. Their emphasis on focusing only on what we can control while accepting what we cannot offers a timeless framework for navigating life's complexities.</p>
+            
+            <p class="mb-6">Eastern philosophical traditions similarly provide frameworks for self-examination. Buddhist mindfulness practices encourage present-moment awareness and non-judgmental observation of our thoughts and feelings, creating space between stimulus and response.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Practical Applications</h3>
+            
+            <p class="mb-6">Regular journaling represents one of the most accessible paths to self-examination. By documenting our thoughts, reactions, and patterns, we create an opportunity to observe ourselves with greater objectivity and identify areas for growth.</p>
+            
+            <p class="mb-6">Dedicated periods of solitude—whether through meditation, walks in nature, or simply sitting quietly without digital distractions—provide another essential practice for the examined life, creating space for insights that rarely emerge amid constant activity.</p>
+            
+            <p class="mb-6">Seeking diverse perspectives through reading, conversation, and exposure to different cultures challenges our preconceptions and expands our understanding of possibilities for living well.</p>
+            
+            <p>The examined life doesn't promise constant happiness or freedom from suffering. Instead, it offers something perhaps more valuable: the capacity to find meaning in our experiences and to live with greater intention and integrity, regardless of external circumstances.</p>`,
+            comments: [],
+          },
+          "Design That Speaks": {
+            content: `<p class="mb-6">Great design transcends aesthetics—it communicates, connects, and transforms our experience of the world. When design truly speaks, it establishes an emotional dialogue with its audience, creating memorable interactions that resonate on a human level.</p>
+            
+            <p class="mb-6">The most impactful design solutions solve problems while telling stories. They seamlessly blend form and function, creating experiences that feel intuitive and meaningful rather than simply decorative or utilitarian.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">The Language of Visual Communication</h3>
+            
+            <p class="mb-6">Effective design employs visual language deliberately—using color psychology, typography, spatial relationships, and imagery to convey specific messages and evoke particular emotions. Like verbal language, this visual vocabulary can be subtle or bold, formal or casual, traditional or innovative.</p>
+            
+            <p class="mb-6">Consider how the rounded, friendly typography and vibrant color palette of a children's educational app immediately signals approachability and playfulness, while the refined minimalism of luxury brand packaging communicates exclusivity and sophistication without saying a word.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Designing for Connection</h3>
+            
+            <p class="mb-6">At its core, design that speaks establishes authentic connections between people and products, services, or spaces. It recognizes that humans are emotional beings who make decisions based not just on logic but on how things make us feel.</p>
+            
+            <p class="mb-6">This understanding explains why we might develop deep attachments to certain objects—the perfectly weighted chef's knife that feels like an extension of our hand, the thoughtfully designed chair that supports us through long workdays, or the intuitive interface that makes complex technology feel accessible.</p>
+            
+            <blockquote class="italic border-l-4 border-gray-300 pl-4 my-6 text-gray-600">
+              "Design is not just what it looks like and feels like. Design is how it works." — Steve Jobs
+            </blockquote>
+            
+            <p class="mb-6">The rise of human-centered design methodologies reflects this shift toward emotional connection. By deeply understanding user needs, desires, and contexts, designers create solutions that resonate on a personal level rather than imposing predetermined aesthetic or functional decisions.</p>
+            
+            <p>As we navigate an increasingly complex world, design that speaks clearly, honestly, and empathetically becomes more valuable than ever—not just creating beautiful things, but meaningful experiences that enhance our lives and reflect our humanity.</p>`,
+            comments: [
+              {
+                text: "As someone who works in UX design, I couldn't agree more with this perspective. Design is fundamentally about communication.",
+                author: "UXMindset",
+                date: "April 10, 2025",
+              },
+            ],
+          },
+          "The Art of Seeing": {
+            content: `<p class="mb-6">Photography is often mistakenly reduced to a technical process—a matter of equipment, settings, and post-processing. Yet its true essence lies in developing a way of seeing that transforms ordinary moments into extraordinary images.</p>
+            
+            <p class="mb-6">The art of photographic seeing involves training ourselves to notice what others miss—the quality of light as it falls across a building, the revealing gesture that captures a subject's personality, or the juxtaposition of elements that creates visual tension or harmony.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Beyond Documentation</h3>
+            
+            <p class="mb-6">While photography certainly serves documentary purposes, its power as an artistic medium emerges when photographers move beyond simply recording what exists to expressing how they perceive and relate to the world. This transformation happens not through equipment but through intention and awareness.</p>
+            
+            <p class="mb-6">The legendary photographer Henri Cartier-Bresson described this as capturing the "decisive moment"—that fraction of a second when visual elements align perfectly to reveal something meaningful. Finding these moments requires presence and patience, a willingness to observe deeply rather than merely look.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Photography as Cultural Mirror</h3>
+            
+            <p class="mb-6">Throughout history, photography has served as both witness and interpreter of cultural moments, preserving not just how things looked, but how they felt. From Dorothea Lange's Depression-era portraits to contemporary street photography, these images speak across time, allowing us to connect with human experiences beyond our own.</p>
+            
+            <p class="mb-6">This cultural documentation is never neutral—every photographic choice from framing to focal length reflects the photographer's perspective and priorities. Recognizing this subjectivity doesn't diminish photography's truth; rather, it acknowledges the complex relationship between observation and interpretation.</p>
+            
+            <h3 class="text-2xl font-semibold mt-8 mb-4">Developing Photographic Vision</h3>
+            
+            <p class="mb-6">For those seeking to deepen their photographic seeing, certain practices prove valuable. Limiting equipment—even occasionally returning to a simple camera or single lens—shifts focus from technical concerns to observation. Similarly, working within constraints such as a single location or subject encourages deeper seeing rather than constant novelty.</p>
+            
+            <p class="mb-6">Studying great photographs with attention to composition, light, and moment trains the eye to recognize these elements in daily life. Perhaps most importantly, making photography a regular practice—even without sharing the results—develops the habit of presence that underlies all meaningful image-making.</p>
+            
+            <p>In a world saturated with images, the most compelling photographs remain those that show us not just what something looks like, but how it feels to be fully present in a moment—reminding us that the art of seeing exists not primarily for creating artifacts, but for enriching our experience of life itself.</p>`,
+            comments: [
+              {
+                text: "The distinction between looking and seeing is so important. This article articulates what I've felt about photography but couldn't express.",
+                author: "LightCapture",
+                date: "April 8, 2025",
+              },
+              {
+                text: "I appreciate the emphasis on developing vision rather than obsessing over equipment. A timely reminder for many photographers.",
+                author: "FocalPoint",
+                date: "April 9, 2025",
+              },
+              {
+                text: "The quote about the 'decisive moment' reminded me why I fell in love with photography in the first place.",
+                author: "MomentSeeker",
+                date: "April 13, 2025",
+              },
+            ],
+          },
+        };
+
+        // Open article popup when clicking on an article card
+        articleCards.forEach((card) => {
+          card.addEventListener("click", function () {
+            // Get article details
+            const title = this.querySelector("h3").textContent.trim();
+            const imageSrc = this.querySelector("img").src;
+            const category = this.querySelector("span").textContent.trim();
+            const summary = this.querySelector("p").textContent.trim();
+
+            // Populate popup with article details
+            popupImage.src = imageSrc;
+            popupImage.alt = title;
+            popupCategory.textContent = category;
+            popupTitle.textContent = title;
+
+            // Add full article content if available
+            if (articleData[title]) {
+              popupContent.innerHTML = articleData[title].content;
+
+              // Load article-specific comments
+              const commentList = document.querySelector(
+                ".article-comment-list"
+              );
+              commentList.innerHTML = "";
+
+              if (!articleComments[title]) {
+                // Initialize comments array if it doesn't exist for this article
+                articleComments[title] = articleData[title].comments || [];
+              }
+
+              // Display existing comments
+              articleComments[title].forEach((comment) => {
+                const commentDiv = document.createElement("div");
+                commentDiv.className = "bg-white shadow-sm p-6";
+                commentDiv.innerHTML = `
+                  <p class="text-gray-600 text-base">${comment.text}</p>
+                  <p class="text-sm text-gray-400 mt-2">— ${comment.author}, ${comment.date}</p>
+                `;
+                commentList.appendChild(commentDiv);
+              });
+            } else {
+              // Fallback content if full article not available
+              popupContent.innerHTML = `<p class="mb-6">${summary}</p>
+                <p class="mb-6">Full article content coming soon...</p>`;
+            }
+
+            // Show popup with smooth transition and prevent page shift
+            document.documentElement.classList.add("popup-open");
+            articlePopup.classList.add("active");
+            body.classList.add("popup-open");
+
+            // Small delay to trigger the second part of the animation
+            setTimeout(() => {
+              articlePopup.querySelector(".article-popup").style.opacity = "1";
+              articlePopup.querySelector(".article-popup").style.transform =
+                "translateY(0)";
+            }, 10);
+          });
+        });
+
+        // Close popup when clicking the close button
+        popupClose.addEventListener("click", function () {
+          articlePopup.querySelector(".article-popup").style.opacity = "0";
+          articlePopup.querySelector(".article-popup").style.transform =
+            "translateY(20px)";
+
+          setTimeout(() => {
+            articlePopup.classList.remove("active");
+            body.classList.remove("popup-open");
+            document.documentElement.classList.remove("popup-open");
+          }, 300);
+        });
+
+        // Close popup when clicking outside the article content
+        articlePopup.addEventListener("click", function (e) {
+          if (e.target === articlePopup) {
+            popupClose.click();
+          }
+        });
+
+        // Handle escape key to close popup
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && articlePopup.classList.contains("active")) {
+            popupClose.click();
+          }
+        });
+
+        // Handle article-specific comment submission
+        document
+          .querySelector(".article-comment-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const commentText = this.querySelector("textarea").value.trim();
+            const currentTitle = popupTitle.textContent.trim();
+
+            if (commentText) {
+              // Create new comment
+              const date = new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              });
+
+              const newComment = {
+                text: commentText,
+                author: "You",
+                date: date,
+              };
+
+              // Add to article-specific comments
+              if (!articleComments[currentTitle]) {
+                articleComments[currentTitle] = [];
+              }
+              articleComments[currentTitle].push(newComment);
+
+              // Display the new comment
+              const commentList = document.querySelector(
+                ".article-comment-list"
+              );
+              const commentDiv = document.createElement("div");
+              commentDiv.className = "bg-white shadow-sm p-6";
+              commentDiv.innerHTML = `
+              <p class="text-gray-600 text-base">${newComment.text}</p>
+              <p class="text-sm text-gray-400 mt-2">— ${newComment.author}, ${newComment.date}</p>
+            `;
+              commentList.appendChild(commentDiv);
+
+              // Clear the textarea
+              this.querySelector("textarea").value = "";
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Learning Path</title>
+  <!-- Add Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Add Heroicons for iconography -->
+  <script src="https://unpkg.com/heroicons@2.0.18/dist/heroicons.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3b82f6',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom styles that can't be achieved with Tailwind */
+    .section { display: none; }
+    input[type="checkbox"] { transform: scale(1.3); }
+    .nav-item-active { 
+      color: #3b82f6;
+      border-top: 2px solid #3b82f6;
+    }
+    .nav-item {
+      transition: all 0.3s ease;
+    }
+    .nav-item:hover {
+      color: #3b82f6;
+      transform: translateY(-2px);
+    }
+    .progress-bar {
+      transition: width 0.5s ease-in-out;
+    }
+    .card-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-in-out;
+    }
+    .card-expanded .card-content {
+      max-height: 500px;
+    }
+    .card-toggle {
+      transition: transform 0.3s ease;
+    }
+    .card-expanded .card-toggle {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
+  <!-- Header bar with logo -->
+  <header class="bg-white dark:bg-gray-800 shadow-md py-4 px-4 sticky top-0 z-10">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.169 1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zm5.99 7.176A9.007 9.007 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+        </svg>
+        <h1 class="text-lg md:text-xl font-bold">Learning Path</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content area -->
+  <main class="container mx-auto px-4 pb-20 md:pb-4 md:pl-64">
+    <div id="home" class="section p-4">
+      <h2 class="text-2xl font-bold mb-6">Welcome to Personalized Learning Path</h2>
+      <div id="home-content" class="mt-4"></div>
+    </div>
+    
+    <div id="learning-path" class="section p-4">
+      <h2 class="text-2xl font-bold mb-4">Your Learning Path</h2>
+      <p id="estimated-time" class="text-gray-600 dark:text-gray-400"></p>
+      <p id="overall-progress" class="text-gray-600 dark:text-gray-400 mb-4"></p>
+      <ul id="path-list" class="space-y-4"></ul>
+    </div>
+    
+    <div id="recommendations" class="section p-4">
+      <h2 class="text-2xl font-bold mb-6">Recommended Topics</h2>
+      <div class="relative">
+        <div class="absolute top-0 left-0 bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-800 dark:from-indigo-900/40 dark:to-indigo-800/40 dark:text-indigo-200 px-3 py-1 rounded-full text-sm font-medium shadow-md">
+          You might like…
+        </div>
+      </div>
+      <div class="carousel-container overflow-x-auto scroll-snap-x flex space-x-4 py-4 px-2 scrollbar-thin scrollbar-thumb-indigo-500 scrollbar-track-indigo-100 dark:scrollbar-thumb-indigo-700 dark:scrollbar-track-indigo-900">
+        <!-- Carousel items will be dynamically inserted here -->
+        <template id="carousel-item-template">
+          <div class="carousel-item flex-shrink-0 w-64 bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 transform transition hover:scale-105">
+            <h3 class="font-medium text-lg mb-2 topic-title"></h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 topic-description"></p>
+            <div class="mt-4">
+              <button class="bg-primary hover:bg-blue-600 text-white rounded-lg px-4 py-2 shadow-md transition-all">Explore</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+    
+    <div id="settings" class="section p-4">
+      <h2 class="text-2xl font-bold mb-6">Settings</h2>
+      <div class="space-y-4">
+        <button id="select-topics" class="bg-primary text-white rounded-lg px-4 py-2 shadow-md hover:bg-blue-600 transition-all">Select Topics</button>
+        <button id="set-schedule" class="bg-primary text-white rounded-lg px-4 py-2 shadow-md hover:bg-blue-600 transition-all">Set Schedule</button>
+      </div>
+    </div>
+    
+    <div id="topics" class="section p-4">
+      <h2 class="text-2xl font-bold mb-4">Select Topics</h2>
+      <ul id="topic-list" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-4"></ul>
+      <div class="flex space-x-2">
+        <button id="save-topics" class="bg-primary text-white rounded-lg px-4 py-2 shadow-md hover:bg-blue-600 transition-all">Save</button>
+        <button id="back-to-settings-from-topics" class="bg-gray-200 dark:bg-gray-700 rounded-lg px-4 py-2 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">Back</button>
+      </div>
+    </div>
+    
+    <div id="schedule" class="section p-4">
+      <h2 class="text-2xl font-bold mb-4">Set Schedule</h2>
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-4">
+        <label class="flex items-center space-x-2">
+          <span>Hours per week:</span>
+          <input type="number" id="hours-per-week" min="1" class="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 dark:bg-gray-700 focus:ring-2 focus:ring-primary focus:border-primary">
+        </label>
+      </div>
+      <div class="flex space-x-2">
+        <button id="save-schedule" class="bg-primary text-white rounded-lg px-4 py-2 shadow-md hover:bg-blue-600 transition-all">Save</button>
+        <button id="back-to-settings-from-schedule" class="bg-gray-200 dark:bg-gray-700 rounded-lg px-4 py-2 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">Back</button>
+      </div>
+    </div>
+    
+    <div id="content" class="section p-4">
+      <h2 id="content-title" class="text-2xl font-bold mb-4"></h2>
+      <p id="content-text" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-4"></p>
+      <button id="back-to-path-from-content" class="bg-gray-200 dark:bg-gray-700 rounded-lg px-4 py-2 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">Back</button>
+    </div>
+    
+    <div id="quiz" class="section p-4">
+      <h2 class="text-2xl font-bold mb-6">Quiz: <span id="quiz-title" class="text-primary"></span></h2>
+      
+      <div class="relative max-w-3xl mx-auto">
+        <!-- Quiz progress indicator -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
+            <span>Progress</span>
+            <span id="quiz-progress">Question <span id="current-question">1</span> of <span id="total-questions">0</span></span>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+            <div id="quiz-progress-bar" class="bg-primary h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <div id="quiz-questions" class="space-y-6"></div>
+        
+        <!-- Question template (hidden, used by JS) -->
+        <template id="question-template">
+          <div class="question-card p-6 bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40 rounded-2xl shadow-md transition-all duration-300 transform hover:shadow-lg">
+            <p class="font-medium text-lg mb-4 question-text"></p>
+            
+            <div class="options-container space-y-2">
+              <!-- Options will be inserted here -->
+            </div>
+            
+            <div class="feedback mt-4 hidden">
+              <div class="correct-feedback hidden">
+                <div class="flex items-center space-x-2 text-green-600 dark:text-green-400 font-medium">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>Correct!</span>
+                </div>
+              </div>
+              <div class="wrong-feedback hidden">
+                <div class="flex items-center space-x-2 text-red-600 dark:text-red-400 font-medium">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>Incorrect. The correct answer is: <span class="correct-answer"></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        
+        <!-- Option template (hidden, used by JS) -->
+        <template id="option-template">
+          <label class="option-label flex items-center p-3 rounded-lg border border-transparent transition-all duration-200 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 cursor-pointer">
+            <input type="radio" class="option-input sr-only">
+            <div class="option-custom-radio w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600 mr-3 flex-shrink-0 transition-all duration-200"></div>
+            <span class="option-text"></span>
+          </label>
+        </template>
+      </div>
+      
+      <div class="flex justify-between mt-8 max-w-3xl mx-auto">
+        <button id="back-to-path-from-quiz" class="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 rounded-lg px-4 py-2 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+          </svg>
+          <span>Back</span>
+        </button>
+        
+        <button id="next-question" class="hidden flex items-center space-x-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-4 py-2 shadow-md transition-all animate-pulse">
+          <span>Next Question</span>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        
+        <button id="submit-quiz" class="flex items-center space-x-2 bg-primary hover:bg-blue-600 text-white rounded-lg px-4 py-2 shadow-md transition-all">
+          <span>Submit Quiz</span>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom navigation bar -->
+  <nav class="navigation fixed md:static bottom-0 left-0 right-0 md:left-0 md:top-0 md:bottom-0 bg-white dark:bg-gray-800 shadow-lg md:w-56 z-10">
+    <ul class="flex justify-around md:flex-col md:space-y-2 md:p-4 md:pt-20">
+      <li class="nav-item flex-1 md:flex-auto text-center py-3 px-2 md:py-2 md:px-4 md:rounded-lg md:hover:bg-gray-100 md:dark:hover:bg-gray-700" data-section="home">
+        <div class="flex flex-col items-center md:flex-row md:space-x-2">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+          </svg>
+          <span class="text-xs md:text-sm">Home</span>
+        </div>
+      </li>
+      <li class="nav-item flex-1 md:flex-auto text-center py-3 px-2 md:py-2 md:px-4 md:rounded-lg md:hover:bg-gray-100 md:dark:hover:bg-gray-700" data-section="learning-path">
+        <div class="flex flex-col items-center md:flex-row md:space-x-2">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 005.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
+          </svg>
+          <span class="text-xs md:text-sm">Path</span>
+        </div>
+      </li>
+      <li class="nav-item flex-1 md:flex-auto text-center py-3 px-2 md:py-2 md:px-4 md:rounded-lg md:hover:bg-gray-100 md:dark:hover:bg-gray-700" data-section="recommendations">
+        <div class="flex flex-col items-center md:flex-row md:space-x-2">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+          </svg>
+          <span class="text-xs md:text-sm">Recs</span>
+        </div>
+      </li>
+      <li class="nav-item flex-1 md:flex-auto text-center py-3 px-2 md:py-2 md:px-4 md:rounded-lg md:hover:bg-gray-100 md:dark:hover:bg-gray-700" data-section="settings">
+        <div class="flex flex-col items-center md:flex-row md:space-x-2">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-xs md:text-sm">Settings</span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <script>
+    const topics = [
+      {
+        id: 1,
+        name: 'HTML Basics',
+        description: 'Learn the fundamentals of HTML.',
+        content: 'HTML (HyperText Markup Language) is the standard markup language for creating web pages.',
+        hours: 5,
+        quiz: [
+          { question: 'What does HTML stand for?', options: ['Hyper Text Markup Language', 'Home Tool Markup Language'], correct: 0 },
+          { question: 'Which tag is used to create a hyperlink?', options: ['<a>', '<link>'], correct: 0 }
+        ]
+      },
+      {
+        id: 2,
+        name: 'CSS Basics',
+        description: 'Learn the basics of CSS for styling web pages.',
+        content: 'CSS (Cascading Style Sheets) is a style sheet language used for describing the presentation of a document.',
+        hours: 6,
+        quiz: [
+          { question: 'What does CSS stand for?', options: ['Cascading Style Sheets', 'Computer Style Sheets'], correct: 0 },
+          { question: 'Which property is used to change the background color?', options: ['color', 'background-color'], correct: 1 }
+        ]
+      }
+    ];
+    let currentQuizTopic = null;
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+      const section = document.getElementById(sectionId);
+      section.style.display = 'block';
+      if (sectionId === 'learning-path') renderLearningPath();
+      else if (sectionId === 'recommendations') renderRecommendations();
+      else if (sectionId === 'home') renderHome();
+    }
+
+    function renderTopics() {
+      const selected = JSON.parse(localStorage.getItem('selectedTopics') || '[]');
+      const list = document.getElementById('topic-list');
+      list.innerHTML = '';
+      
+      topics.forEach(topic => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center space-x-3 p-3 border-b border-gray-200 dark:border-gray-700 last:border-0';
+        li.innerHTML = `
+          <input type="checkbox" value="${topic.id}" class="rounded text-primary focus:ring-primary h-5 w-5" 
+            ${selected.includes(topic.id.toString()) ? 'checked' : ''}>
+          <div>
+            <h4 class="font-medium">${topic.name}</h4>
+            <p class="text-sm text-gray-500 dark:text-gray-400">${topic.description}</p>
+            <span class="text-xs text-gray-500 dark:text-gray-400">${topic.hours} hours</span>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function renderLearningPath() {
+      const selected = JSON.parse(localStorage.getItem('selectedTopics') || '[]');
+      const progressData = JSON.parse(localStorage.getItem('progress') || '{}');
+      const selectedTopics = topics.filter(t => selected.includes(t.id.toString()));
+      const totalHours = selectedTopics.reduce((sum, t) => sum + t.hours, 0);
+      const hoursPerWeek = localStorage.getItem('hoursPerWeek') || 1;
+      const weeks = Math.ceil(totalHours / hoursPerWeek);
+      
+      // Calculate average progress
+      const avgProgress = selectedTopics.length > 0 ? 
+        selectedTopics.reduce((sum, t) => sum + (progressData[t.id] || 0), 0) / selectedTopics.length : 0;
+      
+      // Summary stats at the top
+      const summarySection = document.createElement('div');
+      summarySection.className = 'bg-white dark:bg-gray-800 rounded-2xl ring-1 ring-gray-200 dark:ring-gray-700 shadow-md p-4 mb-6';
+      summarySection.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+          <div class="flex items-center space-x-3">
+            <div class="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span class="text-gray-600 dark:text-gray-300">Estimated time: ${weeks} weeks</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="bg-green-100 dark:bg-green-900 p-2 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span class="text-gray-600 dark:text-gray-300">Overall Progress: ${Math.round(avgProgress)}%</span>
+          </div>
+        </div>
+      `;
+      
+      // Replace the text with our new element
+      const estimatedTimeElement = document.getElementById('estimated-time');
+      if (estimatedTimeElement) {
+        estimatedTimeElement.replaceWith(summarySection);
+      } else {
+        const learningPathSection = document.getElementById('learning-path');
+        const heading = learningPathSection.querySelector('h2');
+        heading.insertAdjacentElement('afterend', summarySection);
+      }
+      
+      document.getElementById('overall-progress').style.display = 'none'; // Hide the old element
+      
+      const list = document.getElementById('path-list');
+      list.innerHTML = '';
+      list.className = 'space-y-4 w-full max-w-3xl mx-auto';
+      
+      if (selected.length === 0) {
+        // Show a message if no topics are selected
+        list.innerHTML = `
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center">
+            <p class="text-gray-600 dark:text-gray-400 mb-4">No topics selected yet.</p>
+            <button id="go-select-topics" 
+              class="bg-primary hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg 
+              transition-all shadow-md hover:shadow-lg">
+              Select Topics
+            </button>
+          </div>
+        `;
+        document.getElementById('go-select-topics').addEventListener('click', () => showSection('topics'));
+        return;
+      }
+      
+      selected.forEach(topicId => {
+        const topic = topics.find(t => t.id == topicId);
+        if (!topic) return; // Skip if topic not found
+        
+        const prog = progressData[topicId] || 0;
+        
+        // Determine icon based on progress
+        let statusIcon = '';
+        let statusClass = '';
+        if (prog >= 80) {
+          statusIcon = '<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>';
+          statusClass = 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300';
+        } else if (prog >= 30) {
+          statusIcon = '<svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>';
+          statusClass = 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300';
+        } else {
+          statusIcon = '<svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"></path></svg>';
+          statusClass = 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300';
+        }
+        
+        const li = document.createElement('li');
+        li.className = 'bg-white dark:bg-gray-800 rounded-2xl shadow-lg ring-1 ring-gray-200 dark:ring-gray-700 overflow-hidden';
+        li.innerHTML = `
+          <div class="p-4 sm:p-5">
+            <div class="flex items-center justify-between cursor-pointer toggle-card">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 rounded-lg ${statusClass}">
+                  ${statusIcon}
+                </div>
+                <h3 class="font-medium text-lg">${topic.name}</h3>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-5 h-5 text-gray-400 card-toggle transition-transform" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+            </div>
+            
+            <div class="mt-2">
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                <div class="bg-primary h-2.5 rounded-full progress-bar" style="width: ${prog}%"></div>
+              </div>
+              <div class="flex justify-between items-center mt-1">
+                <span class="text-xs text-gray-500 dark:text-gray-400">Progress: ${prog}%</span>
+                <span class="text-xs font-medium ${prog >= 80 ? 'text-green-500' : 'text-primary'}">
+                  ${prog >= 80 ? 'Completed' : 'In Progress'}
+                </span>
+              </div>
+            </div>
+            
+            <div class="card-content mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${topic.description}</p>
+              <div class="flex space-x-2 justify-end">
+                <button data-topic="${topicId}" class="view-btn flex items-center space-x-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-3 py-1.5 rounded-lg text-sm transition-all">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>View</span>
+                </button>
+                <button data-topic="${topicId}" class="quiz-btn flex items-center space-x-1 bg-primary hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm transition-all">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>Take Quiz</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+      
+      // Add click event for collapsible cards
+      document.querySelectorAll('.toggle-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          // Don't toggle if clicking on buttons inside the card
+          if (e.target.closest('.view-btn') || e.target.closest('.quiz-btn')) {
+            return;
+          }
+          
+          const item = card.closest('li');
+          item.classList.toggle('card-expanded');
+        });
+      });
+      
+      // Add click event for view buttons
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const topicId = btn.dataset.topic;
+          const topic = topics.find(t => t.id == topicId);
+          document.getElementById('content-title').textContent = topic.name;
+          document.getElementById('content-text').textContent = topic.content;
+          showSection('content');
+        });
+      });
+      
+      // Add click event for quiz buttons
+      document.querySelectorAll('.quiz-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const topicId = btn.dataset.topic;
+          currentQuizTopic = topicId;
+          const topic = topics.find(t => t.id == topicId);
+          document.getElementById('quiz-title').textContent = topic.name;
+          const questionsDiv = document.getElementById('quiz-questions');
+          questionsDiv.innerHTML = '';
+          topic.quiz.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'mb-4';
+            qDiv.innerHTML = `<p class="font-medium mb-2">${q.question}</p>
+              <div class="space-y-2">
+                ${q.options.map((opt, i) => `
+                  <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    <input type="radio" name="q${index}" value="${i}" class="text-primary focus:ring-primary">
+                    <span>${opt}</span>
+                  </label>
+                `).join('')}
+              </div>`;
+            questionsDiv.appendChild(qDiv);
+          });
+          showSection('quiz');
+        });
+      });
+    }
+
+    function renderRecommendations() {
+      const selected = JSON.parse(localStorage.getItem('selectedTopics') || '[]');
+      const list = document.getElementById('rec-list');
+      list.innerHTML = '';
+      const notSelected = topics.filter(t => !selected.includes(t.id.toString()));
+      if (notSelected.length > 0) {
+        const rec = notSelected[0];
+        const li = document.createElement('li');
+        li.textContent = rec.name;
+        list.appendChild(li);
+      } else {
+        list.innerHTML = '<p>All topics selected!</p>';
+      }
+    }
+
+    function renderHome() {
+      const selected = JSON.parse(localStorage.getItem('selectedTopics') || '[]');
+      const content = document.getElementById('home-content');
+      
+      if (selected.length > 0) {
+        content.innerHTML = `
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center">
+            <h3 class="text-xl font-bold mb-4">Welcome Back!</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Continue your learning journey</p>
+            <button id="continue-learning" 
+              class="bg-primary hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg 
+              transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+              Continue Learning
+            </button>
+          </div>
+        `;
+        document.getElementById('continue-learning').addEventListener('click', () => showSection('learning-path'));
+      } else {
+        content.innerHTML = `
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center">
+            <h3 class="text-xl font-bold mb-4">Get Started</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Begin your personalized learning journey</p>
+            <button id="start-selecting" 
+              class="bg-primary hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg 
+              transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+              Select Topics
+            </button>
+          </div>
+        `;
+        document.getElementById('start-selecting').addEventListener('click', () => showSection('topics'));
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTopics();
+      showSection('home');
+      document.getElementById('hours-per-week').value = localStorage.getItem('hoursPerWeek') || 1;
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => showSection(item.dataset.section));
+      });
+      document.getElementById('save-topics').addEventListener('click', () => {
+        const selected = [];
+        document.querySelectorAll('#topic-list input:checked').forEach(input => selected.push(input.value));
+        localStorage.setItem('selectedTopics', JSON.stringify(selected));
+        showSection('settings');
+      });
+      document.getElementById('save-schedule').addEventListener('click', () => {
+        const hours = document.getElementById('hours-per-week').value;
+        localStorage.setItem('hoursPerWeek', hours);
+        showSection('settings');
+      });
+      
+      // Set up interactive quiz
+      let currentQuestionIndex = 0;
+      let quizQuestions = [];
+      
+      // Back to path from quiz
+      document.getElementById('back-to-path-from-quiz').addEventListener('click', () => {
+        showSection('learning-path');
+        resetQuiz();
+      });
+      
+      // Next question button
+      document.getElementById('next-question').addEventListener('click', () => {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+      });
+      
+      // Submit quiz button handling
+      document.getElementById('submit-quiz').addEventListener('click', handleQuizSubmit);
+      
+      function resetQuiz() {
+        currentQuestionIndex = 0;
+        quizQuestions = [];
+        document.getElementById('quiz-questions').innerHTML = '';
+        document.getElementById('next-question').classList.add('hidden');
+        document.getElementById('submit-quiz').classList.remove('hidden');
+      }
+      
+      function renderQuestion(index) {
+        // Update progress indicators
+        document.getElementById('current-question').textContent = index + 1;
+        document.getElementById('quiz-progress-bar').style.width = `${((index + 1) / quizQuestions.length) * 100}%`;
+        
+        // Hide all questions
+        document.querySelectorAll('.question-card').forEach(card => {
+          card.classList.add('hidden');
+        });
+        
+        // Show current question
+        const currentQuestion = document.querySelectorAll('.question-card')[index];
+        currentQuestion.classList.remove('hidden');
+        
+        // Update button visibility
+        const isLastQuestion = index === quizQuestions.length - 1;
+        document.getElementById('next-question').classList.toggle('hidden', isLastQuestion);
+        document.getElementById('submit-quiz').classList.toggle('hidden', !isLastQuestion);
+      }
+      
+      function handleQuizSubmit() {
+        const topicId = currentQuizTopic;
+        const topic = topics.find(t => t.id == topicId);
+        let score = 0;
+        let allAnswered = true;
+        
+        // Get all question cards
+        const questionCards = document.querySelectorAll('.question-card');
+        
+        // Check each question
+        topic.quiz.forEach((q, index) => {
+          const questionCard = questionCards[index];
+          const selectedOption = questionCard.querySelector(`input[name="q${index}"]:checked`);
+          const feedbackDiv = questionCard.querySelector('.feedback');
+          const correctFeedback = questionCard.querySelector('.correct-feedback');
+          const wrongFeedback = questionCard.querySelector('.wrong-feedback');
+          
+          // Show feedback for this question
+          feedbackDiv.classList.remove('hidden');
+          
+          if (selectedOption) {
+            const isCorrect = selectedOption.value == q.correct;
+            if (isCorrect) {
+              score++;
+              correctFeedback.classList.remove('hidden');
+              wrongFeedback.classList.add('hidden');
+              
+              // Add green border to correct option
+              const selectedLabel = selectedOption.closest('label');
+              selectedLabel.classList.add('bg-green-100', 'dark:bg-green-900/30', 'border-green-300', 'dark:border-green-700');
+              selectedLabel.querySelector('.option-custom-radio').classList.add('bg-green-500', 'border-green-500');
+            } else {
+              wrongFeedback.classList.remove('hidden');
+              correctFeedback.classList.add('hidden');
+              wrongFeedback.querySelector('.correct-answer').textContent = q.options[q.correct];
+              
+              // Add red border to wrong option
+              const selectedLabel = selectedOption.closest('label');
+              selectedLabel.classList.add('bg-red-100', 'dark:bg-red-900/30', 'border-red-300', 'dark:border-red-700');
+              selectedLabel.querySelector('.option-custom-radio').classList.add('bg-red-500', 'border-red-500');
+              
+              // Highlight correct answer
+              const correctLabel = Array.from(questionCard.querySelectorAll('.option-label'))[q.correct];
+              correctLabel.classList.add('bg-green-100', 'dark:bg-green-900/30', 'border-green-300', 'dark:border-green-700');
+              correctLabel.querySelector('.option-custom-radio').classList.add('bg-green-500', 'border-green-500');
+            }
+          } else {
+            allAnswered = false;
+          }
+        });
+        
+        if (!allAnswered) {
+          alert("Please answer all questions before submitting.");
+          return;
+        }
+        
+        // Calculate and save progress
+        const percentage = (score / topic.quiz.length) * 100;
+        const progress = JSON.parse(localStorage.getItem('progress') || '{}');
+        progress[topicId] = percentage;
+        localStorage.setItem('progress', JSON.stringify(progress));
+        
+        if (percentage >= 80) {
+          const completed = JSON.parse(localStorage.getItem('completed') || '[]');
+          if (!completed.includes(topicId)) completed.push(topicId);
+          localStorage.setItem('completed', JSON.stringify(completed));
+        }
+        
+        // Show the score in a nicer way
+        setTimeout(() => {
+          const resultMessage = `Your score: ${percentage}%`;
+          alert(resultMessage);
+          showSection('learning-path');
+        }, 1500);
+      }
+      
+      // Quiz button click handler that sets up the enhanced quiz UI
+      document.querySelectorAll('.quiz-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const topicId = btn.dataset.topic;
+          currentQuizTopic = topicId;
+          const topic = topics.find(t => t.id == topicId);
+          
+          // Set quiz title
+          document.getElementById('quiz-title').textContent = topic.name;
+          
+          // Reset quiz state
+          resetQuiz();
+          
+          // Store quiz questions
+          quizQuestions = topic.quiz;
+          
+          // Update total questions display
+          document.getElementById('total-questions').textContent = quizQuestions.length;
+          
+          // Get the questions container
+          const questionsDiv = document.getElementById('quiz-questions');
+          questionsDiv.innerHTML = '';
+          
+          // Create question cards from template
+          const questionTemplate = document.getElementById('question-template');
+          const optionTemplate = document.getElementById('option-template');
+          
+          quizQuestions.forEach((q, index) => {
+            // Clone the question template
+            const questionCard = questionTemplate.content.cloneNode(true);
+            const questionElement = questionCard.querySelector('.question-card');
+            
+            // Set question text
+            questionElement.querySelector('.question-text').textContent = q.question;
+            
+            // Create options
+            const optionsContainer = questionElement.querySelector('.options-container');
+            
+            q.options.forEach((opt, i) => {
+              // Clone the option template
+              const optionElement = optionTemplate.content.cloneNode(true);
+              
+              // Set option text and value
+              optionElement.querySelector('.option-text').textContent = opt;
+              const radioInput = optionElement.querySelector('.option-input');
+              radioInput.name = `q${index}`;
+              radioInput.value = i;
+              
+              // Add click handler for the custom styled radio
+              const optionLabel = optionElement.querySelector('.option-label');
+              radioInput.addEventListener('change', () => {
+                // Remove selected styling from all options in this question
+                optionsContainer.querySelectorAll('.option-label').forEach(label => {
+                  label.classList.remove('bg-indigo-100', 'dark:bg-indigo-900/40', 'border-indigo-300', 'dark:border-indigo-700');
+                  label.querySelector('.option-custom-radio').classList.remove('bg-primary', 'border-primary');
+                });
+                
+                // Add selected styling to this option
+                optionLabel.classList.add('bg-indigo-100', 'dark:bg-indigo-900/40', 'border-indigo-300', 'dark:border-indigo-700');
+                optionLabel.querySelector('.option-custom-radio').classList.add('bg-primary', 'border-primary');
+                
+                // Show next button if not the last question
+                if (index < quizQuestions.length - 1) {
+                  document.getElementById('next-question').classList.remove('hidden');
+                }
+              });
+              
+              optionsContainer.appendChild(optionElement);
+            });
+            
+            // Hide all cards except first one
+            if (index !== 0) {
+              questionElement.classList.add('hidden');
+            }
+            
+            questionsDiv.appendChild(questionCard);
+          });
+          
+          showSection('quiz');
+        });
+      });
+
+      // Other initialization code
+      document.getElementById('select-topics').addEventListener('click', () => showSection('topics'));
+      document.getElementById('set-schedule').addEventListener('click', () => showSection('schedule'));
+      document.getElementById('back-to-settings-from-topics').addEventListener('click', () => showSection('settings'));
+      document.getElementById('back-to-settings-from-schedule').addEventListener('click', () => showSection('settings'));
+      document.getElementById('back-to-path-from-content').addEventListener('click', () => showSection('learning-path'));
+    });
+  </script>
+</body>
+</html>
