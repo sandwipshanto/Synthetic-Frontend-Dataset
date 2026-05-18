@@ -1,6 +1,34 @@
-# UI/UX Design Portfolio
+# UI/UX & Product Design Portfolio
 
-Welcome to my design portfolio! This repository showcases a collection of modern, responsive, and highly interactive user interfaces built with React (TypeScript + Tailwind CSS + Framer Motion) and custom HTML/CSS templates.
+Welcome to my design portfolio! This repository showcases my product design capabilities, ranging from advanced AI tools (like AI Copilot and Image Generators) to highly interactive React interfaces and responsive HTML templates.
+
+---
+
+## 🌟 Featured Project: AI Copilot (reSheet)
+
+The AI Copilot is an advanced, intelligent data assistant built directly into the interface. It allows users to orchestrate complex tasks, automate workflows, and extract insights seamlessly.
+
+<div align="center">
+  <img src="./03-brand-assets/AI-Copilot/ai-copilot-logo.png" width="150" alt="AI Copilot Logo" />
+  <br/><br/>
+</div>
+
+### Interface Highlights
+
+| Dashboard & Overview | Copilot Interactions |
+|:---:|:---:|
+| <img src="./03-brand-assets/AI-Copilot/screenshots/reSheet1.png" width="500" /> | <img src="./03-brand-assets/AI-Copilot/screenshots/reSheet2.png" width="500" /> |
+| <img src="./03-brand-assets/AI-Copilot/screenshots/reSheet3.png" width="500" /> | <img src="./03-brand-assets/AI-Copilot/screenshots/reSheet4.png" width="500" /> |
+
+---
+
+## 🚀 AI Product Assets
+
+A collection of branding and product identities for advanced AI tooling.
+
+| Bulk Image Generator | Image Variations |
+|:---:|:---:|
+| <img src="./03-brand-assets/Bulk-Image-Generator/bulk-image-generator-logo.png" width="300" /> | <img src="./03-brand-assets/Image-Variations/image-variations-logo.png" width="300" /> |
 
 ---
 
@@ -61,7 +89,7 @@ Static, fully responsive HTML/CSS templates designed for various industries and 
 
 * **`01-react-components/`**: Interactive TSX React projects requiring build steps (Vite/Tailwind).
 * **`02-html-templates/`**: Drop-in ready, responsive vanilla HTML/CSS templates.
-* **`03-brand-assets/`**: Vector icons, logos, and UI asset collections.
+* **`03-brand-assets/`**: Vector icons, logos, and AI product screenshots.
 * **`04-thumbnails/`**: High-resolution gallery screenshots.
 
 ---
